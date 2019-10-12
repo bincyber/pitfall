@@ -1,0 +1,101 @@
+{
+    "version": 3,
+    "checkpoint": {
+        "stack": "pit-stack-5596f8c6cb3b4485",
+        "latest": {
+            "manifest": {
+                "time": "2019-09-22T12:12:12.258017-07:00",
+                "magic": "0351e58a8e1677f197d37d18444f1efc625c737269da566f74642fa91780cbc7",
+                "version": "v1.3.3"
+            },
+            "secrets_providers": {
+                "type": "passphrase",
+                "state": {
+                    "salt": "v1:abcdefghijk=:v1:abcdefghijklmnopqrstuvwxyz1234567890=="
+                }
+            },
+            "resources": [
+                {
+                    "urn": "urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::pulumi:pulumi:Stack::pit-project-7760edbe319d4e41-pit-stack-5596f8c6cb3b4485",
+                    "custom": false,
+                    "type": "pulumi:pulumi:Stack",
+                    "outputs": {
+                        "s3_bucket_name": "pitfall-test-bucket-7915523"
+                    }
+                },
+                {
+                    "urn": "urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::pulumi:providers:aws::default_1_2_1",
+                    "custom": true,
+                    "id": "4954fa74-510f-4e3c-9c25-eb357b6fac07",
+                    "type": "pulumi:providers:aws",
+                    "inputs": {
+                        "region": "us-west-2",
+                        "version": "1.2.1"
+                    },
+                    "outputs": {
+                        "region": "us-west-2",
+                        "version": "1.2.1"
+                    }
+                },
+                {
+                    "urn": "urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::aws:s3/bucket:Bucket::pitfall-test-bucket",
+                    "custom": true,
+                    "id": "pitfall-test-bucket-7915523",
+                    "type": "aws:s3/bucket:Bucket",
+                    "inputs": {
+                        "__defaults": [
+                            "acl",
+                            "bucket",
+                            "forceDestroy"
+                        ],
+                        "acl": "private",
+                        "bucket": "pitfall-test-bucket-7915523",
+                        "forceDestroy": true,
+                        "tags": {
+                            "BillingProject": "testing",
+                            "CreatedBy": "Pulumi",
+                            "CreatedOn": "2019/09/22",
+                            "Environment": "test",
+                            "PulumiProject": "pit-project-7760edbe319d4e41",
+                            "PulumiStack": "pit-stack-5596f8c6cb3b4485",
+                            "__defaults": []
+                        }
+                    },
+                    "outputs": {
+                        "accelerationStatus": "",
+                        "acl": "private",
+                        "arn": "arn:aws:s3:::pitfall-test-bucket-7915523",
+                        "bucket": "pitfall-test-bucket-7915523",
+                        "bucketDomainName": "pitfall-test-bucket-7915523.s3.amazonaws.com",
+                        "bucketRegionalDomainName": "pitfall-test-bucket-7915523.s3.us-west-2.amazonaws.com",
+                        "corsRules": [],
+                        "forceDestroy": true,
+                        "hostedZoneId": "Z3BJ6K6RIION7M",
+                        "id": "pitfall-test-bucket-7915523",
+                        "lifecycleRules": [],
+                        "loggings": [],
+                        "region": "us-west-2",
+                        "requestPayer": "BucketOwner",
+                        "tags": {
+                            "BillingProject": "testing",
+                            "CreatedBy": "Pulumi",
+                            "CreatedOn": "2019/09/22",
+                            "Environment": "test",
+                            "PulumiProject": "pit-project-7760edbe319d4e41",
+                            "PulumiStack": "pit-stack-5596f8c6cb3b4485"
+                        },
+                        "versioning": {
+                            "enabled": false,
+                            "mfaDelete": false
+                        }
+                    },
+                    "parent": "urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::pulumi:pulumi:Stack::pit-project-7760edbe319d4e41-pit-stack-5596f8c6cb3b4485",
+                    "provider": "urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::pulumi:providers:aws::default_1_2_1::4954fa74-510f-4e3c-9c25-eb357b6fac07",
+                    "propertyDependencies": {
+                        "tags": null
+                    }
+                }
+            ]
+        }
+    }
+}

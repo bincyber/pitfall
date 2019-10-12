@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pycryptodomex = "==3.9.0"
+PyYAML = "==5.1.2"
+
+[dev-packages]
+bandit = "*"
+boto3 = "*"
+coveralls = "*"
+"flake8" = "*"
+ipython = "*"
+mypy = "*"
+netaddr = "*"
+"nose2" = "*"
+pulumi = "==1.4.0"
+pulumi_aws = "==1.7.0"
+requests = "*"
+
+[requires]
+python_version = "3.7"

@@ -1,0 +1,114 @@
+---
+version: 2
+
+references:
+  base_job_config: &base_job_config
+    working_directory: /home/circleci/repo
+    docker:
+      - image: circleci/python:3.7.5
+
+  restore_pipenv_from_cache: &restore_pipenv_from_cache
+    restore_cache:
+      keys:
+        - pipenv-{{ checksum "Pipfile.lock" }}
+        - pipenv-{{ .Branch }}
+        - pipenv-
+
+  restore_pulumi_from_cache: &restore_pulumi_from_cache
+    restore_cache:
+      keys:
+        - pulumi-{{ checksum ".circleci/pulumi-version.txt" }}
+
+  install_pulumi: &install_pulumi
+    run:
+      name: Install Pulumi
+      command: |
+          PULUMI_VERSION=$(cat .circleci/pulumi-version.txt)
+          [ -f /home/circleci/pulumi.tar.gz ] || curl -Lo /home/circleci/pulumi.tar.gz "https://get.pulumi.com/releases/sdk/pulumi-${PULUMI_VERSION}-linux-x64.tar.gz"
+          tar -xvzf /home/circleci/pulumi.tar.gz
+          sudo cp pulumi/* /usr/local/bin/
+          pulumi version
+
+jobs:
+  install_dependencies:
+    <<: *base_job_config
+    steps:
+      - checkout
+      - *restore_pipenv_from_cache
+      - run:
+          name: Install dependencies with Pipenv
+          command: make install
+
+      - save_cache:
+          key: pipenv-{{ checksum "Pipfile.lock" }}
+          paths:
+            - "/home/circleci/.local/share/virtualenvs/"
+
+      - *restore_pulumi_from_cache
+      - *install_pulumi
+      - save_cache:
+          key: pulumi-{{ checksum ".circleci/pulumi-version.txt" }}
+          paths:
+            - "/home/circleci/pulumi.tar.gz"
+
+  linting:
+    <<: *base_job_config
+    steps:
+      - checkout
+      - *restore_pipenv_from_cache
+      - run:
+          name: Lint the codebase
+          command: pipenv run make lint
+
+  unit_tests:
+    <<: *base_job_config
+    steps:
+      - checkout
+      - *restore_pipenv_from_cache
+      - *restore_pulumi_from_cache
+      - *install_pulumi
+      - run:
+          name: Run unit tests
+          command: pipenv run make test
+
+      - store_artifacts:
+          path: htmlcov
+
+      - run:
+          name: Publish test coverage
+          command: pipenv run coveralls
+
+  e2e_tests:
+    working_directory: /home/circleci/repo
+    docker:
+      - image: circleci/python:3.7.5
+      - image: localstack/localstack:0.10.3
+        environment:
+            DEBUG: "1"
+            HOSTNAME: "localhost"
+            SERVICES: "s3"
+    steps:
+      - checkout
+      - *restore_pipenv_from_cache
+      - *restore_pulumi_from_cache
+      - *install_pulumi
+      - run:
+          name: Run end to end tests
+          command: pipenv run nose2 -v -s e2e/localstack
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - install_dependencies
+      - linting:
+          requires:
+            - install_dependencies
+      - unit_tests:
+          requires:
+            - install_dependencies
+            - linting
+      - e2e_tests:
+          requires:
+            - install_dependencies
+            - unit_tests

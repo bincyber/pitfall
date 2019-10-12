@@ -1,0 +1,137 @@
+{
+    "config": {
+        "aws:region": "us-west-2",
+        "pitfall:billing-project": "testing",
+        "pitfall:environment": "test",
+        "pitfall:s3_bucket_name": "pitfall-1174b83f846341908354ffc0"
+    },
+    "steps": [
+        {
+            "op": "same",
+            "urn": "urn:pulumi:pit-stack-6f713df454ad4582::pitfall::pulumi:pulumi:Stack::pitfall-pit-stack-6f713df454ad4582",
+            "oldState": {
+                "urn": "urn:pulumi:pit-stack-6f713df454ad4582::pitfall::pulumi:pulumi:Stack::pitfall-pit-stack-6f713df454ad4582",
+                "custom": false,
+                "type": "pulumi:pulumi:Stack",
+                "outputs": {
+                    "s3_bucket_name": "pitfall-1174b83f846341908354ffc0-c4f911a"
+                }
+            },
+            "newState": {
+                "urn": "urn:pulumi:pit-stack-6f713df454ad4582::pitfall::pulumi:pulumi:Stack::pitfall-pit-stack-6f713df454ad4582",
+                "custom": false,
+                "type": "pulumi:pulumi:Stack",
+                "outputs": {
+                    "s3_bucket_name": "pitfall-1174b83f846341908354ffc0-c4f911a"
+                }
+            },
+            "detailedDiff": null
+        },
+        {
+            "op": "update",
+            "urn": "urn:pulumi:pit-stack-6f713df454ad4582::pitfall::aws:s3/bucket:Bucket::pitfall-1174b83f846341908354ffc0",
+            "provider": "urn:pulumi:pit-stack-6f713df454ad4582::pitfall::pulumi:providers:aws::default_1_2_1::1d00d323-d9d0-44a5-8483-ef91065a428f",
+            "oldState": {
+                "urn": "urn:pulumi:pit-stack-6f713df454ad4582::pitfall::aws:s3/bucket:Bucket::pitfall-1174b83f846341908354ffc0",
+                "custom": true,
+                "id": "pitfall-1174b83f846341908354ffc0-c4f911a",
+                "type": "aws:s3/bucket:Bucket",
+                "inputs": {
+                    "__defaults": [
+                        "acl",
+                        "bucket",
+                        "forceDestroy"
+                    ],
+                    "acl": "private",
+                    "bucket": "pitfall-1174b83f846341908354ffc0-c4f911a",
+                    "forceDestroy": false,
+                    "tags": {
+                        "BillingProject": "integration-testing",
+                        "CreatedBy": "Pulumi",
+                        "Environment": "test",
+                        "PulumiProject": "pitfall",
+                        "PulumiStack": "pit-stack-6f713df454ad4582",
+                        "__defaults": []
+                    }
+                },
+                "outputs": {
+                    "accelerationStatus": "",
+                    "acl": "private",
+                    "arn": "arn:aws:s3:::pitfall-1174b83f846341908354ffc0-c4f911a",
+                    "bucket": "pitfall-1174b83f846341908354ffc0-c4f911a",
+                    "bucketDomainName": "pitfall-1174b83f846341908354ffc0-c4f911a.s3.amazonaws.com",
+                    "bucketRegionalDomainName": "pitfall-1174b83f846341908354ffc0-c4f911a.s3.us-west-2.amazonaws.com",
+                    "corsRules": [],
+                    "forceDestroy": false,
+                    "hostedZoneId": "Z3BJ6K6RIION7M",
+                    "id": "pitfall-1174b83f846341908354ffc0-c4f911a",
+                    "lifecycleRules": [],
+                    "loggings": [],
+                    "region": "us-west-2",
+                    "requestPayer": "BucketOwner",
+                    "tags": {
+                        "BillingProject": "integration-testing",
+                        "CreatedBy": "Pulumi",
+                        "Environment": "test",
+                        "PulumiProject": "pitfall",
+                        "PulumiStack": "pit-stack-6f713df454ad4582"
+                    },
+                    "versioning": {
+                        "enabled": false,
+                        "mfaDelete": false
+                    }
+                },
+                "parent": "urn:pulumi:pit-stack-6f713df454ad4582::pitfall::pulumi:pulumi:Stack::pitfall-pit-stack-6f713df454ad4582",
+                "provider": "urn:pulumi:pit-stack-6f713df454ad4582::pitfall::pulumi:providers:aws::default_1_2_1::1d00d323-d9d0-44a5-8483-ef91065a428f",
+                "propertyDependencies": {
+                    "tags": null
+                }
+            },
+            "newState": {
+                "urn": "urn:pulumi:pit-stack-6f713df454ad4582::pitfall::aws:s3/bucket:Bucket::pitfall-1174b83f846341908354ffc0",
+                "custom": true,
+                "id": "pitfall-1174b83f846341908354ffc0-c4f911a",
+                "type": "aws:s3/bucket:Bucket",
+                "inputs": {
+                    "__defaults": [
+                        "acl",
+                        "bucket",
+                        "forceDestroy"
+                    ],
+                    "acl": "private",
+                    "bucket": "pitfall-1174b83f846341908354ffc0-c4f911a",
+                    "forceDestroy": false,
+                    "tags": {
+                        "BillingProject": "testing",
+                        "CreatedBy": "Pulumi",
+                        "CreatedOn": "2019/10/08",
+                        "Customer": "[secret]",
+                        "Environment": "test",
+                        "Owner": "bincyber",
+                        "PulumiProject": "pitfall",
+                        "PulumiStack": "pit-stack-6f713df454ad4582",
+                        "__defaults": []
+                    }
+                },
+                "parent": "urn:pulumi:pit-stack-6f713df454ad4582::pitfall::pulumi:pulumi:Stack::pitfall-pit-stack-6f713df454ad4582",
+                "provider": "urn:pulumi:pit-stack-6f713df454ad4582::pitfall::pulumi:providers:aws::default_1_2_1::1d00d323-d9d0-44a5-8483-ef91065a428f",
+                "propertyDependencies": {
+                    "tags": null
+                }
+            },
+            "diffReasons": [
+                "tags"
+            ],
+            "detailedDiff": {
+                "tags.BillingProject": {
+                    "kind": "update",
+                    "inputDiff": false
+                }
+            }
+        }
+    ],
+    "changeSummary": {
+        "same": 1,
+        "update": 1
+    }
+}
