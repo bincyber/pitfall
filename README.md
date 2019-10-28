@@ -5,6 +5,7 @@
 [![Version](https://img.shields.io/badge/Version-0.0.1-green.svg)](#)
 [![Status](https://img.shields.io/badge/Status-alpha-yellow.svg)](#)
 [![Coverage Status](https://coveralls.io/repos/github/bincyber/pitfall/badge.svg?branch=master)](https://coveralls.io/github/bincyber/pitfall?branch=master)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=bincyber_pitfall&metric=alert_status)](https://sonarcloud.io/dashboard?id=bincyber_pitfall)
 [![CircleCI](https://circleci.com/gh/bincyber/pitfall.svg?style=svg)](https://circleci.com/gh/bincyber/pitfall)
 
 _pitfall_ is a Python integration testing framework for [Pulumi](https://github.com/pulumi/pulumi) Infrastructure as Code. It enables and encourages end to end testing to avoid errors, assumptions, and other pitfalls.

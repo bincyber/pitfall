@@ -1,5 +1,5 @@
 ---
-version: 2
+version: 2.1
 
 references:
   base_job_config: &base_job_config
@@ -19,6 +19,11 @@ references:
       keys:
         - pulumi-{{ checksum ".circleci/pulumi-version.txt" }}
 
+  restore_coverage_from_cache: &restore_coverage_from_cache
+    restore_cache:
+      keys:
+        - coverage-{{ .Branch }}
+
   install_pulumi: &install_pulumi
     run:
       name: Install Pulumi
@@ -28,6 +33,9 @@ references:
           tar -xvzf /home/circleci/pulumi.tar.gz
           sudo cp pulumi/* /usr/local/bin/
           pulumi version
+
+orbs:
+  sonarcloud: sonarsource/sonarcloud@1.0.0
 
 jobs:
   install_dependencies:
@@ -69,7 +77,9 @@ jobs:
       - *install_pulumi
       - run:
           name: Run unit tests
-          command: pipenv run make test
+          command: |
+            pipenv run make test
+            pipenv run coverage report
 
       - store_artifacts:
           path: htmlcov
@@ -77,6 +87,11 @@ jobs:
       - run:
           name: Publish test coverage
           command: pipenv run coveralls
+
+      - save_cache:
+          key: coverage-{{ .Branch }}
+          paths:
+            - ".coverage"
 
   e2e_tests:
     working_directory: /home/circleci/repo
@@ -96,19 +111,31 @@ jobs:
           name: Run end to end tests
           command: pipenv run nose2 -v -s e2e/localstack
 
+  sonarcloud_scan:
+    <<: *base_job_config
+    steps:
+      - checkout
+      - *restore_pipenv_from_cache
+      - *restore_coverage_from_cache
+      - run:
+          name: Generate test coverage in XML
+          command: pipenv run coverage xml -i
+      - sonarcloud/scan
+
 workflows:
-  version: 2
   main:
     jobs:
       - install_dependencies
+      - e2e_tests:
+          requires:
+            - install_dependencies
       - linting:
           requires:
             - install_dependencies
       - unit_tests:
           requires:
-            - install_dependencies
             - linting
-      - e2e_tests:
+      - sonarcloud_scan:
+          context: SonarCloud
           requires:
-            - install_dependencies
             - unit_tests
