@@ -9,3 +9,6 @@ pitf-*/
 notes/
 .mypy_cache/
 .DS_Store
+*.egg-info
+build/
+dist/

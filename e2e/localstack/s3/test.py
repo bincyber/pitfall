@@ -46,7 +46,7 @@ class TestProvisioningS3Bucket(unittest.TestCase):
         ]
 
         plugins = [
-            PulumiPlugin(kind='resource', name='aws', version='v1.2.1')
+            PulumiPlugin(kind='resource', name='aws', version='v1.7.0')
         ]
 
         provisioned_bucket_name = None
@@ -76,7 +76,7 @@ class TestProvisioningS3Bucket(unittest.TestCase):
         ]
 
         plugins = [
-            PulumiPlugin(kind='resource', name='aws', version='v1.2.1')
+            PulumiPlugin(kind='resource', name='aws', version='v1.7.0')
         ]
 
         opts = PulumiIntegrationTestOptions(verbose=True, cleanup=False, preview=False, destroy=False)

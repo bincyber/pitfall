@@ -19,6 +19,10 @@ netaddr = "*"
 pulumi = "==1.4.0"
 pulumi_aws = "==1.7.0"
 requests = "*"
+setuptools = "*"
+toml = "*"
+twine = "*"
+wheel = "*"
 
 [requires]
 python_version = "3.7"
