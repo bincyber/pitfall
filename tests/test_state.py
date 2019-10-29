@@ -158,6 +158,19 @@ class TestPulumiState(unittest.TestCase):
         resources = self.pulumi_state.resources
         self.assertEqual(1, len(resources))
 
+        # ComponentResource should not be collected as a resource from the state file
+        unwanted_resource = PulumiResource(
+            id='unset',
+            urn='urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::ComponentResource:IntegrationTest::pitfall-test-component-resource',
+            type='ComponentResource:IntegrationTest',
+            inputs={},
+            outputs={},
+            parent='urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::pulumi:pulumi:Stack::pit-project-7760edbe319d4e41-pit-stack-5596f8c6cb3b4485',
+            provider='',
+            dependencies={}
+        )
+        self.assertNotIn(unwanted_resource, resources)
+
         resource = resources[0]
         self.assertIsInstance(resource, PulumiResource)
         self.assertEqual("pitfall-test-bucket-7915523", resource.id)

@@ -114,6 +114,10 @@ class PulumiState:
             if regex.match(resource_type):
                 continue
 
+            # skip any resource that doesnt have an id (eg, ComponentResource)
+            if i.get("id") is None:
+                continue
+
             pulumi_resource = PulumiResource(
                 id           = i["id"],
                 urn          = i["urn"],

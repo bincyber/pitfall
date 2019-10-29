@@ -94,6 +94,12 @@
                     "propertyDependencies": {
                         "tags": null
                     }
+                },
+                {
+                    "urn": "urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::ComponentResource:IntegrationTest::pitfall-test-component-resource",
+                    "custom": false,
+                    "type": "ComponentResource:IntegrationTest",
+                    "parent": "urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::pulumi:pulumi:Stack::pit-project-7760edbe319d4e41-pit-stack-5596f8c6cb3b4485"
                 }
             ]
         }
