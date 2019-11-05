@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 pycryptodomex = "==3.9.0"
 PyYAML = "==5.1.2"
+anytree = "==2.7.2"
 
 [dev-packages]
 bandit = "*"

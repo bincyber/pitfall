@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from contextlib import redirect_stdout
+from io import StringIO
 from pitfall.actions import PulumiStep, PulumiPreview, PulumiUp, PulumiDestroy
 from pitfall import exceptions
 from pitfall import utils
@@ -62,8 +64,12 @@ class TestPulumiPreview(unittest.TestCase):
         completed_process = subprocess.CompletedProcess(args=self.args, returncode=0, stdout=stdout, stderr=b'')
 
         with patch('subprocess.run', MagicMock(return_value=completed_process)):
-            with utils.capture_stdout(self.pulumi_preview.execute) as output:
-                self.assertTrue(output.startswith('$ pulumi preview --non-interactive --json\n'))
+            b = StringIO()
+            with redirect_stdout(b):
+                self.pulumi_preview.execute()
+
+            output = b.getvalue()
+            self.assertTrue(output.startswith('$ pulumi preview --non-interactive --json\n'))
 
     def test_execute_raises_exception(self):
         stdout = b'{"config":{}, "steps":[], "diagnostics":[{"message":"error: Missing required configuration variable...", "severity": "error"}]}'
@@ -204,8 +210,12 @@ Permalink: file:///Users/aliibrahim/Devel/local/pit/pit-cocobiek/.pulumi/stacks/
         completed_process = subprocess.CompletedProcess(args=self.args, returncode=0, stdout=stdout, stderr=b'')
 
         with patch('subprocess.run', MagicMock(return_value=completed_process)):
-            with utils.capture_stdout(self.pulumi_up.execute) as output:
-                self.assertTrue(output.startswith('$ pulumi up --non-interactive --skip-preview\n'))
+            b = StringIO()
+            with redirect_stdout(b):
+                self.pulumi_up.execute()
+
+            output = b.getvalue()
+            self.assertTrue(output.startswith('$ pulumi up --non-interactive --skip-preview\n'))
 
     def test_execute_raises_exception(self):
         stdout = b'''Updating (pit-stack-1e890f9e54c44aef):
@@ -316,8 +326,12 @@ If you want to remove the stack completely, run 'pulumi stack rm pit-stack-f6822
         completed_process = subprocess.CompletedProcess(args=self.args, returncode=0, stdout=stdout, stderr=stderr)
 
         with patch('subprocess.run', MagicMock(return_value=completed_process)):
-            with utils.capture_stdout(self.pulumi_destroy.execute) as output:
-                self.assertTrue(output.startswith('$ pulumi destroy --non-interactive --skip-preview\n'))
+            b = StringIO()
+            with redirect_stdout(b):
+                self.pulumi_destroy.execute()
+
+            output = b.getvalue()
+            self.assertTrue(output.startswith('$ pulumi destroy --non-interactive --skip-preview\n'))
 
     def test_execute_raises_exception(self):
         stdout = b'''Destroying (pit-stack-f68224b0594e4baa):

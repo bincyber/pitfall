@@ -31,8 +31,9 @@ It will do the following:
 * create a temp directory to store Pulumi code and state
 * copy the contents of the current directory (and all subdirectories) to the temp directory
 * move into the temp directory
-* create a new Pulumi project and stack
-* initialize a new Pulumi state file
+* create a new Pulumi project file: `Pulumi.yaml`
+* create a new Pulumi stack file: `Pulumi.<stack name>.yaml`
+* initialize a new Pulumi state file in `.pulumi/`
 * install Pulumi plugins
 * execute `pulumi preview`
 * execute `pulumi up`
@@ -266,7 +267,7 @@ class IntegrationTest(unittest.TestCase):
 
             # verify that 3 resources have been provisioned
             resources = t.state.resources
-            self.assertEqual(len(resources), 3)
+            self.assertEqual(resources.providers["pulumi:providers:aws"], 3)
 
             # get the bucket_name and website_url from the stack outputs
             stack_outputs = t.get_stack_outputs()
@@ -300,6 +301,109 @@ Execute the integration test and ensure it passes:
     Ran 1 test in 19.033s
 
     OK
+
+
+### Features
+
+#### Configuration and Secrets
+
+_pitfall_ supports Pulumi [Configuration and Secrets](https://www.pulumi.com/docs/intro/concepts/config/):
+
+```python
+from pitfall import PulumiConfigurationKey, PulumiIntegrationTest
+import os
+
+dbpassword = os.urandom(32)
+
+config = [
+    PulumiConfigurationKey(name='aws:region', value="us-east-1"),
+    PulumiConfigurationKey(name='dbpassword', value=dbpassword, encrypted=True)
+]
+
+t = PulumiIntegrationTest(config=config)
+
+t.setup()
+```
+
+When `t.setup()` is called, the Pulumi stack file (`Pulumi.<stack name>.yaml`) will automatically be created with the supplied configuration. Configuration keys are automatically namespaced with the name of the Pulumi Project and Secrets are encryped using the password set by the environment variable `PULUMI_CONFIG_PASSPHRASE`:
+
+```
+$ cat Pulumi.pitf-stack-91c13928d11648be.yaml
+
+config:
+  aws:region: us-east-1
+  pitf-project-99c24db7cc324cf9:dbpassword:
+    secure: v1:6UEXewJReYiPCgrg:fOFTB4ODFyZB0bvHA2lhoZJ3khCOQCkX8n5OhLXjgSECbu+WrcIQ+wl0HaZhZ/4v
+encryptionsalt: v1:GEHe83S30O0=:v1:s8vb7cVFSz64pUmv:Ff5AbbcbTSim8cBwDCQCwraGHEQQ/A==
+```
+
+
+#### Context Manager
+
+_pitfall_ includes a context manager to automatically setup a test and execute the Pulumi workflow:
+
+```python
+from pitfall import PulumiConfigurationKey, PulumiIntegrationTest
+
+directory = '/path/to/pulumi/code'
+opts      = PulumiIntegrationTestOptions(cleanup=True, preview=True, up=True, destroy=True)
+
+with PulumiIntegrationTest(directory=directory, opts=opts) as t:
+    pass
+```
+
+The context manager will create a temporary directory for the test, copy the entire contents of `directory` to the temporary directory, generate the Pulumi Project and Stack files, initialize a new Pulumi local state file, install Pulumi plugins, and execute `pulumi preview`, `pulumi up`, and `pulumi destroy`. Upon exit, the context manager will delete the temporary directory.
+
+To control automatic execution of Pulumi commands, temporary directory deletion, and verbosity, set desired options with [PulumiIntegrationTestOptions](https://github.com/bincyber/pitfall/blob/master/pitfall/core.py#L36).
+
+
+#### Pulumi State
+
+_pitfall_ exposes the Pulumi state as a Python object [PulumiState](https://github.com/bincyber/pitfall/blob/master/pitfall/state.py#L39). Both the current and previous state are accessible as Class properties. The resources in the state file can be viewed and searched:
+
+```python
+t = PulumiIntegrationTest()
+
+resources = t.state.resources
+
+for i in resources:
+    print(i.urn, i.id, i.type)
+
+resources.providers  # {"pulumi:providers:aws": 1}
+
+resources.types  # {"aws:s3/bucket:Bucket": 1, "pulumi:pulumi:Stack": 1}
+
+results = resources.lookup(key="type", value="aws:s3/bucket:Bucket")
+
+s3_bucket = results[0]
+
+print(s3_bucket.id)  # pitfall-basic-example-649ce5f
+
+print(s3_bucket.outputs["arn"])  # arn:aws:s3:::pitfall-basic-example-649ce5f
+```
+
+#### Resources Graph
+
+_pitfall_ can export the resources in the Pulumi state file as a DOT file:
+
+```python
+with PulumiIntegrationTest(directory=directory, opts=opts) as t:
+    resources = t.state.resources
+    resources.export_dotfile(filename='~/graph.dot')
+```
+
+View the DOT file:
+```
+$ cat ~/graph.dot
+
+digraph tree {
+    "pulumi:pulumi:Stack";
+    "aws:s3/bucket:Bucket (pitfall-basic-example-649ce5f)";
+    "pulumi:pulumi:Stack" -> "aws:s3/bucket:Bucket (pitfall-basic-example-649ce5f)";
+}
+```
+
+This DOT file can then be viewed using the `dot` command or online at [webgraphviz.com](http://www.webgraphviz.com/).
 
 
 ### Environment Variables

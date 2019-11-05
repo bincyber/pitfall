@@ -53,7 +53,9 @@ class IntegrationTest(unittest.TestCase):
 
             # verify that 8 resources were provisioned
             resources = t.state.resources
-            self.assertEqual(8, len(resources))
+            resources.render_tree()
+
+            self.assertEqual(resources.providers["pulumi:providers:aws"], 8)
 
             outputs = t.get_stack_outputs()
 

@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path
-from pitfall.state import PulumiState, PulumiResource
 from pitfall import utils
 from pitfall import exceptions
+from pitfall.state import PulumiState, PulumiResource, PulumiResources
 from unittest.mock import patch, MagicMock
 import copy
 import os
@@ -23,6 +25,123 @@ import json
 import shutil
 import subprocess
 import unittest
+
+
+class TestPulumiResource(unittest.TestCase):
+    def test_repr(self):
+        resource = PulumiResource(urn="test-resource", rtype="test-type", rid="test-id")
+
+        expected = "PulumiResource(urn='test-resource', rtype='test-type', rid='test-id', provider=None, inputs=None, outputs=None, dependencies=None, parent=None)"
+        actual   = resource.__repr__()
+        self.assertEqual(expected, actual)
+
+
+class TestPulumiResources(unittest.TestCase):
+    def setUp(self):
+        provider = 'urn:pulumi:pitf-stack-1::pitf-project-1::pulumi:providers:aws::default_1_7_0::4b11ab10-4d75-4029-8032-3a0370b1623a'
+
+        self.first  = PulumiResource(urn="test-stack", rtype="pulumi:pulumi:Stack", rid="1")
+        self.second = PulumiResource(urn="test-vpc", rtype="aws:ec2/vpc:Vpc", rid="vpc-001", provider=provider, parent=self.first)
+        self.third  = PulumiResource(urn="test-subnet-1", rtype="aws:ec2/subnet:Subnet", rid="subnet-001", provider=provider, parent=self.second)
+        self.fourth = PulumiResource(urn="test-bucket", rtype="aws:s3/bucket:Bucket", rid="test-s3-bucket", provider=provider, parent=self.first)
+        self.fifth  = PulumiResource(urn="test-subnet-2", rtype="aws:ec2/subnet:Subnet", rid="subnet-002", provider=provider, parent=self.second)
+
+        self.pulumi_resources = PulumiResources(items=[self.first, self.second, self.third, self.fourth, self.fifth])
+
+    def tearDown(self):
+        pass
+
+    def test_iterator(self):
+        for i in self.pulumi_resources:
+            self.assertIsInstance(i, PulumiResource)
+
+    def test_append(self):
+        new_resource = PulumiResource(urn="test-resource", rtype="test", rid="6", parent=self.first)
+        self.pulumi_resources.append(new_resource)
+        self.assertEqual(len(self.pulumi_resources), 6)
+
+    def test_lookup(self):
+        answer = self.pulumi_resources.lookup(key="type", value="aws:ec2/vpc:Vpc")
+        self.assertEqual(answer[0], self.second)
+
+        answer = self.pulumi_resources.lookup(key="urn", value="test-subnet-1")
+        self.assertEqual(answer[0], self.third)
+
+        answer = self.pulumi_resources.lookup(key="type", value="aws:ec2/subnet:Subnet")
+        self.assertEqual(2, len(answer))
+
+    def test_providers_extraction(self):
+        providers = self.pulumi_resources.providers
+
+        self.assertEqual(providers["pulumi:providers:aws"], 4)
+
+    def test_providers_existing(self):
+        providers = {"pulumi:providers:gcp": 5}
+        self.pulumi_resources._providers = providers
+
+        self.assertDictEqual(self.pulumi_resources.providers, providers)
+
+    def test_types_extraction(self):
+        types = self.pulumi_resources.types
+
+        self.assertEqual(4, len(types))
+        self.assertEqual(types["aws:ec2/vpc:Vpc"], 1)
+        self.assertEqual(types["aws:ec2/subnet:Subnet"], 2)
+
+    def test_types_existing(self):
+        types = {"aws:ec2/vpc:Vpc": 2}
+        self.pulumi_resources._types = types
+
+        self.assertDictEqual(self.pulumi_resources.types, types)
+
+    def test__format_node_name(self):
+        expected = "aws:ec2/subnet:Subnet (subnet-002)"
+        actual   = self.pulumi_resources._PulumiResources__format_node_name(self.fifth)
+        self.assertEqual(expected, actual)
+
+    def test__find_root_node(self):
+        node   = self.pulumi_resources._PulumiResources__find_root_node(self.first)
+        self.assertEqual(node, self.first)
+
+        node   = self.pulumi_resources._PulumiResources__find_root_node(self.third)
+        self.assertEqual(node, self.first)
+
+    def test_render_tree(self):
+        b = StringIO()
+        with redirect_stdout(b):
+            self.pulumi_resources.render_tree()
+
+        output = b.getvalue()
+        self.assertTrue(output.startswith('pulumi:pulumi:Stack'))
+        self.assertEqual(len(output.split('\n')), 6)
+
+    def test_export_dotfile(self):
+        filename = Path('/tmp/graph.dot')
+        if filename.exists():
+            os.remove(filename)
+
+        self.pulumi_resources.export_dotfile(filename)
+        self.assertTrue(filename.exists())
+
+        contents = filename.read_text()
+        self.assertTrue(contents.startswith('digraph tree {'))
+        self.assertEqual(len(contents.split('\n')), 12)
+
+        os.remove(filename)
+
+    def test_export_dotfile_unspecified_filename(self):
+        filename = Path.cwd().joinpath('graph.dot')
+        if filename.exists():
+            os.remove(filename)
+
+        self.pulumi_resources.export_dotfile()
+        self.assertTrue(filename.exists())
+
+        contents = filename.read_text()
+        self.assertTrue(contents.startswith('digraph tree {'))
+        self.assertEqual(len(contents.split('\n')), 12)
+
+        os.remove(filename)
 
 
 class TestPulumiState(unittest.TestCase):
@@ -155,27 +274,23 @@ class TestPulumiState(unittest.TestCase):
         self.pulumi_state.filepath.parent.mkdir(parents=True, exist_ok=False)
         self.pulumi_state.filepath.write_text(test_state)
 
-        resources = self.pulumi_state.resources
-        self.assertEqual(1, len(resources))
+        pulumi_resources = self.pulumi_state.resources
+        self.assertEqual(13, len(pulumi_resources))
 
-        # ComponentResource should not be collected as a resource from the state file
-        unwanted_resource = PulumiResource(
-            id='unset',
-            urn='urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::ComponentResource:IntegrationTest::pitfall-test-component-resource',
-            type='ComponentResource:IntegrationTest',
-            inputs={},
-            outputs={},
-            parent='urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::pulumi:pulumi:Stack::pit-project-7760edbe319d4e41-pit-stack-5596f8c6cb3b4485',
-            provider='',
-            dependencies={}
-        )
-        self.assertNotIn(unwanted_resource, resources)
+        for i in pulumi_resources:
+            self.assertIsInstance(i, PulumiResource)
 
-        resource = resources[0]
+        self.assertEqual(pulumi_resources[0].type, "pulumi:pulumi:Stack")
+        self.assertIsNone(pulumi_resources[0].parent)
+
+        root = pulumi_resources[0]
+
+        resource = pulumi_resources.lookup(key="type", value="aws:s3/bucket:Bucket")[0]
         self.assertIsInstance(resource, PulumiResource)
-        self.assertEqual("pitfall-test-bucket-7915523", resource.id)
+        self.assertEqual("pitfall-14add43", resource.id)
         self.assertEqual("aws:s3/bucket:Bucket", resource.type)
-        self.assertIsInstance(resource.parent, str)
+        self.assertEqual(resource.parent, root)
+        self.assertIsInstance(resource.parent, PulumiResource)
         self.assertIsInstance(resource.provider, str)
         self.assertIsInstance(resource.inputs, dict)
         self.assertIsInstance(resource.outputs, dict)

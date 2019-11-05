@@ -22,7 +22,7 @@ references:
   restore_coverage_from_cache: &restore_coverage_from_cache
     restore_cache:
       keys:
-        - coverage-{{ .Branch }}
+        - coverage-{{ .Revision }}
 
   install_pulumi: &install_pulumi
     run:
@@ -89,7 +89,7 @@ jobs:
           command: pipenv run coveralls
 
       - save_cache:
-          key: coverage-{{ .Branch }}
+          key: coverage-{{ .Revision }}
           paths:
             - ".coverage"
 

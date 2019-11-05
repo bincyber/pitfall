@@ -32,5 +32,5 @@ run-localstack:
 package:
 	python setup.py sdist bdist_wheel
 
-upload-package:
+publish:
 	twine upload dist/*

@@ -1,4 +1,4 @@
-import component_resource
+from componentresource import VpcWithPublicSubnets
 import pulumi
 
 
@@ -17,7 +17,7 @@ tags = {
     'PulumiStack': pulumi.get_stack(),
 }
 
-component_resource = component_resource.VpcWithPublicSubnets(
+component_resource = VpcWithPublicSubnets(
     name=vpc_name,
     cidr=vpc_cidr,
     subnets=subnets,

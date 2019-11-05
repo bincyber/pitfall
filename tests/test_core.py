@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path
 from pitfall.core import PulumiIntegrationTest, PulumiIntegrationTestOptions
 from pitfall.config import PulumiConfigurationKey, DEFAULT_PULUMI_CONFIG_PASSPHRASE, DEFAULT_PULUMI_HOME
@@ -112,8 +114,12 @@ class TestPulumiIntegrationTest(unittest.TestCase):
 
         self.integration_test.plugins = plugins
 
-        with utils.capture_stdout(self.integration_test._install_pulumi_plugins) as output:
-            self.assertTrue(output.startswith('Installed plugin:'))
+        b = StringIO()
+        with redirect_stdout(b):
+            self.integration_test._install_pulumi_plugins()
+
+        output = b.getvalue()
+        self.assertTrue(output.startswith('Installed plugin:'))
 
         path = Path(f'{pulumi_home}/plugins/{kind}-{name}-{version}')
 

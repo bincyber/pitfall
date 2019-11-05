@@ -21,7 +21,7 @@ class TestPulumiCode(unittest.TestCase):
     def tearDown(self):
         os.chdir(self.pwd)
 
-    def test_aws_provision_s3_bucket_with_cleanup_destroy(self):
+    def test_aws_provision_s3_bucket_with_auto_cleanup_destroy(self):
         region      = "us-east-2"
         bucket_name = f"pitfall-test-bucket-1"
 
@@ -48,7 +48,7 @@ class TestPulumiCode(unittest.TestCase):
         with self.assertRaises(botocore.exceptions.ClientError):
             self.s3.head_bucket(Bucket=provisioned_bucket_name)
 
-    def test_aws_provision_s3_bucket_without_cleanup_destroy(self):
+    def test_aws_provision_s3_bucket_without_auto_cleanup_destroy(self):
         region = "us-east-1"
         bucket_name = f"pitfall-test-bucket-2"
 
@@ -87,11 +87,13 @@ class TestPulumiCode(unittest.TestCase):
             self.assertEqual(expected, actual)
 
             # verify required tags have been set by checking the state file
-            s3_resource = integration_test.state.resources[0]
-            self.assertEqual("aws:s3/bucket:Bucket", s3_resource.type)
+            resources = integration_test.state.resources
+
+            s3_bucket_resource = resources.lookup(key="type", value="aws:s3/bucket:Bucket")[0]
+            self.assertEqual("aws:s3/bucket:Bucket", s3_bucket_resource.type)
 
             required_tags = {"CreatedBy", "CreatedOn", "Environment", "BillingProject", "Owner"}
-            self.assertTrue(required_tags <= set(s3_resource.outputs["tags"]))
+            self.assertTrue(required_tags <= set(s3_bucket_resource.outputs["tags"]))
 
             # upload __main__.py to the S3 bucket
             filename       = "__main__.py"

@@ -20,7 +20,7 @@ class IntegrationTest(unittest.TestCase):
             PulumiPlugin(kind='resource', name='aws', version='v1.7.0')
         ]
 
-        opts = PulumiIntegrationTestOptions(cleanup=True, preview=False, up=False, destroy=False)
+        opts = PulumiIntegrationTestOptions(verbose=True, cleanup=True, preview=False, up=False, destroy=False)
 
         directory = Path(__file__)
 
@@ -40,7 +40,7 @@ class IntegrationTest(unittest.TestCase):
 
             # verify that 3 resources have been provisioned
             resources = t.state.resources
-            self.assertEqual(len(resources), 3)
+            self.assertEqual(resources.providers["pulumi:providers:aws"], 3)
 
             # get the bucket_name and website_url from the stack outputs
             stack_outputs = t.get_stack_outputs()

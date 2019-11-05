@@ -1,105 +1,602 @@
 {
     "version": 3,
     "checkpoint": {
-        "stack": "pit-stack-5596f8c6cb3b4485",
+        "stack": "pitf-stack-388ef76614da4d71",
         "latest": {
             "manifest": {
-                "time": "2019-09-22T12:12:12.258017-07:00",
-                "magic": "0351e58a8e1677f197d37d18444f1efc625c737269da566f74642fa91780cbc7",
-                "version": "v1.3.3"
+                "time": "2019-10-15T12:10:17.22126045-04:00",
+                "magic": "63556338d86370db835249c95d7be82a6faf40b39cbf43cb94ed25936834dae6",
+                "version": "v1.4.0"
             },
             "secrets_providers": {
                 "type": "passphrase",
                 "state": {
-                    "salt": "v1:abcdefghijk=:v1:abcdefghijklmnopqrstuvwxyz1234567890=="
+                    "salt": "v1:pvHcrN/WLEo=:v1:atkgDES0Jqlb63RW:gzNGSoO007zQoSO7vom0u172Fe0Ttw=="
                 }
             },
             "resources": [
                 {
-                    "urn": "urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::pulumi:pulumi:Stack::pit-project-7760edbe319d4e41-pit-stack-5596f8c6cb3b4485",
+                    "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::pulumi:pulumi:Stack::pitf-project-f90c97ba86734aed-pitf-stack-388ef76614da4d71",
                     "custom": false,
                     "type": "pulumi:pulumi:Stack",
                     "outputs": {
-                        "s3_bucket_name": "pitfall-test-bucket-7915523"
+                        "internet_gateway": {
+                            "id": "igw-05f10892bfe5cd2db",
+                            "owner_id": "404182346941",
+                            "tags": {
+                                "BillingProject": "integration-testing",
+                                "CreatedBy": "Pulumi",
+                                "Environment": "test",
+                                "Name": "pitfall-test-vpc",
+                                "PulumiProject": "pitf-project-f90c97ba86734aed",
+                                "PulumiStack": "pitf-stack-388ef76614da4d71"
+                            },
+                            "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/internetGateway:InternetGateway::internet-gateway",
+                            "vpc_id": "vpc-0704f4b9f5ad93528"
+                        },
+                        "public_route_table": {
+                            "id": "rtb-04c0164103f4f39e3",
+                            "owner_id": "404182346941",
+                            "propagating_vgws": [],
+                            "routes": [],
+                            "tags": {
+                                "BillingProject": "integration-testing",
+                                "CreatedBy": "Pulumi",
+                                "Environment": "test",
+                                "Name": "public-route-table",
+                                "PulumiProject": "pitf-project-f90c97ba86734aed",
+                                "PulumiStack": "pitf-stack-388ef76614da4d71"
+                            },
+                            "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/routeTable:RouteTable::public-route-table",
+                            "vpc_id": "vpc-0704f4b9f5ad93528"
+                        },
+                        "public_subnets": [
+                            {
+                                "arn": "arn:aws:ec2:us-west-2:404182346941:subnet/subnet-0a986162f9f4834df",
+                                "assign_ipv6_address_on_creation": false,
+                                "availability_zone": "us-west-2a",
+                                "availability_zone_id": "usw2-az1",
+                                "cidr_block": "10.0.0.0/20",
+                                "id": "subnet-0a986162f9f4834df",
+                                "ipv6_cidr_block": "",
+                                "ipv6_cidr_block_association_id": "",
+                                "map_public_ip_on_launch": true,
+                                "owner_id": "404182346941",
+                                "tags": {
+                                    "BillingProject": "integration-testing",
+                                    "CreatedBy": "Pulumi",
+                                    "Environment": "test",
+                                    "Name": "public-subnet-1",
+                                    "PulumiProject": "pitf-project-f90c97ba86734aed",
+                                    "PulumiStack": "pitf-stack-388ef76614da4d71",
+                                    "VPC": "vpc-0704f4b9f5ad93528"
+                                },
+                                "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/subnet:Subnet::public-subnet-1",
+                                "vpc_id": "vpc-0704f4b9f5ad93528"
+                            },
+                            {
+                                "arn": "arn:aws:ec2:us-west-2:404182346941:subnet/subnet-05c7359ece39e7eb1",
+                                "assign_ipv6_address_on_creation": false,
+                                "availability_zone": "us-west-2b",
+                                "availability_zone_id": "usw2-az2",
+                                "cidr_block": "10.0.16.0/20",
+                                "id": "subnet-05c7359ece39e7eb1",
+                                "ipv6_cidr_block": "",
+                                "ipv6_cidr_block_association_id": "",
+                                "map_public_ip_on_launch": true,
+                                "owner_id": "404182346941",
+                                "tags": {
+                                    "BillingProject": "integration-testing",
+                                    "CreatedBy": "Pulumi",
+                                    "Environment": "test",
+                                    "Name": "public-subnet-2",
+                                    "PulumiProject": "pitf-project-f90c97ba86734aed",
+                                    "PulumiStack": "pitf-stack-388ef76614da4d71",
+                                    "VPC": "vpc-0704f4b9f5ad93528"
+                                },
+                                "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/subnet:Subnet::public-subnet-2",
+                                "vpc_id": "vpc-0704f4b9f5ad93528"
+                            }
+                        ],
+                        "s3_bucket_name": "pitfall-14add43",
+                        "vpc": {
+                            "arn": "arn:aws:ec2:us-west-2:404182346941:vpc/vpc-0704f4b9f5ad93528",
+                            "assign_generated_ipv6_cidr_block": false,
+                            "cidr_block": "10.0.0.0/16",
+                            "default_network_acl_id": "acl-02d5bd66a622e92db",
+                            "default_route_table_id": "rtb-08b445d190dc19c88",
+                            "default_security_group_id": "sg-0ffde883dd2cae3a6",
+                            "dhcp_options_id": "dopt-02dda8445796f64c6",
+                            "enable_classiclink": false,
+                            "enable_classiclink_dns_support": false,
+                            "enable_dns_hostnames": true,
+                            "enable_dns_support": true,
+                            "id": "vpc-0704f4b9f5ad93528",
+                            "instance_tenancy": "default",
+                            "ipv6_association_id": "",
+                            "ipv6_cidr_block": "",
+                            "main_route_table_id": "rtb-08b445d190dc19c88",
+                            "owner_id": "404182346941",
+                            "tags": {
+                                "BillingProject": "integration-testing",
+                                "CreatedBy": "Pulumi",
+                                "Environment": "test",
+                                "Name": "pitfall-test-vpc",
+                                "PulumiProject": "pitf-project-f90c97ba86734aed",
+                                "PulumiStack": "pitf-stack-388ef76614da4d71"
+                            },
+                            "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/vpc:Vpc::vpc"
+                        }
                     }
                 },
                 {
-                    "urn": "urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::pulumi:providers:aws::default_1_2_1",
+                    "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::pulumi:providers:aws::default",
                     "custom": true,
-                    "id": "4954fa74-510f-4e3c-9c25-eb357b6fac07",
+                    "id": "6a8aaea4-3753-4ecb-90e5-7448e3fdfba9",
+                    "type": "pulumi:providers:aws",
+                    "inputs": {
+                        "region": "us-west-2"
+                    },
+                    "outputs": {
+                        "region": "us-west-2"
+                    }
+                },
+                {
+                    "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets::pitfall-test-vpc",
+                    "custom": false,
+                    "type": "ComponentResource:VpcWithPublicSubnets",
+                    "parent": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::pulumi:pulumi:Stack::pitf-project-f90c97ba86734aed-pitf-stack-388ef76614da4d71"
+                },
+                {
+                    "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::pulumi:providers:aws::default_1_7_0",
+                    "custom": true,
+                    "id": "90dbb9b7-72b5-472f-a2d4-3e77be4c1709",
                     "type": "pulumi:providers:aws",
                     "inputs": {
                         "region": "us-west-2",
-                        "version": "1.2.1"
+                        "version": "1.7.0"
                     },
                     "outputs": {
                         "region": "us-west-2",
-                        "version": "1.2.1"
+                        "version": "1.7.0"
                     }
                 },
                 {
-                    "urn": "urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::aws:s3/bucket:Bucket::pitfall-test-bucket",
+                    "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/vpc:Vpc::vpc",
                     "custom": true,
-                    "id": "pitfall-test-bucket-7915523",
+                    "id": "vpc-0704f4b9f5ad93528",
+                    "type": "aws:ec2/vpc:Vpc",
+                    "inputs": {
+                        "__defaults": [
+                            "assignGeneratedIpv6CidrBlock",
+                            "instanceTenancy"
+                        ],
+                        "assignGeneratedIpv6CidrBlock": false,
+                        "cidrBlock": "10.0.0.0/16",
+                        "enableDnsHostnames": true,
+                        "enableDnsSupport": true,
+                        "instanceTenancy": "default",
+                        "tags": {
+                            "BillingProject": "integration-testing",
+                            "CreatedBy": "Pulumi",
+                            "Environment": "test",
+                            "Name": "pitfall-test-vpc",
+                            "PulumiProject": "pitf-project-f90c97ba86734aed",
+                            "PulumiStack": "pitf-stack-388ef76614da4d71",
+                            "__defaults": []
+                        }
+                    },
+                    "outputs": {
+                        "__meta": "{\"schema_version\":\"1\"}",
+                        "arn": "arn:aws:ec2:us-west-2:404182346941:vpc/vpc-0704f4b9f5ad93528",
+                        "assignGeneratedIpv6CidrBlock": false,
+                        "cidrBlock": "10.0.0.0/16",
+                        "defaultNetworkAclId": "acl-02d5bd66a622e92db",
+                        "defaultRouteTableId": "rtb-08b445d190dc19c88",
+                        "defaultSecurityGroupId": "sg-0ffde883dd2cae3a6",
+                        "dhcpOptionsId": "dopt-02dda8445796f64c6",
+                        "enableClassiclink": false,
+                        "enableClassiclinkDnsSupport": false,
+                        "enableDnsHostnames": true,
+                        "enableDnsSupport": true,
+                        "id": "vpc-0704f4b9f5ad93528",
+                        "instanceTenancy": "default",
+                        "ipv6AssociationId": "",
+                        "ipv6CidrBlock": "",
+                        "mainRouteTableId": "rtb-08b445d190dc19c88",
+                        "ownerId": "404182346941",
+                        "tags": {
+                            "BillingProject": "integration-testing",
+                            "CreatedBy": "Pulumi",
+                            "Environment": "test",
+                            "Name": "pitfall-test-vpc",
+                            "PulumiProject": "pitf-project-f90c97ba86734aed",
+                            "PulumiStack": "pitf-stack-388ef76614da4d71"
+                        }
+                    },
+                    "parent": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets::pitfall-test-vpc",
+                    "provider": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::pulumi:providers:aws::default_1_7_0::90dbb9b7-72b5-472f-a2d4-3e77be4c1709",
+                    "propertyDependencies": {
+                        "cidrBlock": null,
+                        "enableDnsHostnames": null,
+                        "enableDnsSupport": null,
+                        "tags": null
+                    }
+                },
+                {
+                    "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/routeTable:RouteTable::public-route-table",
+                    "custom": true,
+                    "id": "rtb-04c0164103f4f39e3",
+                    "type": "aws:ec2/routeTable:RouteTable",
+                    "inputs": {
+                        "__defaults": [],
+                        "tags": {
+                            "BillingProject": "integration-testing",
+                            "CreatedBy": "Pulumi",
+                            "Environment": "test",
+                            "Name": "public-route-table",
+                            "PulumiProject": "pitf-project-f90c97ba86734aed",
+                            "PulumiStack": "pitf-stack-388ef76614da4d71",
+                            "__defaults": []
+                        },
+                        "vpcId": "vpc-0704f4b9f5ad93528"
+                    },
+                    "outputs": {
+                        "id": "rtb-04c0164103f4f39e3",
+                        "ownerId": "404182346941",
+                        "propagatingVgws": [],
+                        "routes": [],
+                        "tags": {
+                            "BillingProject": "integration-testing",
+                            "CreatedBy": "Pulumi",
+                            "Environment": "test",
+                            "Name": "public-route-table",
+                            "PulumiProject": "pitf-project-f90c97ba86734aed",
+                            "PulumiStack": "pitf-stack-388ef76614da4d71"
+                        },
+                        "vpcId": "vpc-0704f4b9f5ad93528"
+                    },
+                    "parent": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets::pitfall-test-vpc",
+                    "dependencies": [
+                        "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/vpc:Vpc::vpc"
+                    ],
+                    "provider": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::pulumi:providers:aws::default_1_7_0::90dbb9b7-72b5-472f-a2d4-3e77be4c1709",
+                    "propertyDependencies": {
+                        "tags": null,
+                        "vpcId": [
+                            "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/vpc:Vpc::vpc"
+                        ]
+                    }
+                },
+                {
+                    "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::aws:s3/bucket:Bucket::pitfall",
+                    "custom": true,
+                    "id": "pitfall-14add43",
                     "type": "aws:s3/bucket:Bucket",
                     "inputs": {
                         "__defaults": [
                             "acl",
-                            "bucket",
-                            "forceDestroy"
+                            "bucket"
                         ],
                         "acl": "private",
-                        "bucket": "pitfall-test-bucket-7915523",
+                        "bucket": "pitfall-14add43",
                         "forceDestroy": true,
                         "tags": {
-                            "BillingProject": "testing",
+                            "BillingProject": "integration-testing",
                             "CreatedBy": "Pulumi",
-                            "CreatedOn": "2019/09/22",
                             "Environment": "test",
-                            "PulumiProject": "pit-project-7760edbe319d4e41",
-                            "PulumiStack": "pit-stack-5596f8c6cb3b4485",
+                            "PulumiProject": "pitf-project-f90c97ba86734aed",
+                            "PulumiStack": "pitf-stack-388ef76614da4d71",
                             "__defaults": []
                         }
                     },
                     "outputs": {
                         "accelerationStatus": "",
                         "acl": "private",
-                        "arn": "arn:aws:s3:::pitfall-test-bucket-7915523",
-                        "bucket": "pitfall-test-bucket-7915523",
-                        "bucketDomainName": "pitfall-test-bucket-7915523.s3.amazonaws.com",
-                        "bucketRegionalDomainName": "pitfall-test-bucket-7915523.s3.us-west-2.amazonaws.com",
+                        "arn": "arn:aws:s3:::pitfall-14add43",
+                        "bucket": "pitfall-14add43",
+                        "bucketDomainName": "pitfall-14add43.s3.amazonaws.com",
+                        "bucketRegionalDomainName": "pitfall-14add43.s3.us-west-2.amazonaws.com",
                         "corsRules": [],
                         "forceDestroy": true,
                         "hostedZoneId": "Z3BJ6K6RIION7M",
-                        "id": "pitfall-test-bucket-7915523",
+                        "id": "pitfall-14add43",
                         "lifecycleRules": [],
                         "loggings": [],
                         "region": "us-west-2",
                         "requestPayer": "BucketOwner",
                         "tags": {
-                            "BillingProject": "testing",
+                            "BillingProject": "integration-testing",
                             "CreatedBy": "Pulumi",
-                            "CreatedOn": "2019/09/22",
                             "Environment": "test",
-                            "PulumiProject": "pit-project-7760edbe319d4e41",
-                            "PulumiStack": "pit-stack-5596f8c6cb3b4485"
+                            "PulumiProject": "pitf-project-f90c97ba86734aed",
+                            "PulumiStack": "pitf-stack-388ef76614da4d71"
                         },
                         "versioning": {
                             "enabled": false,
                             "mfaDelete": false
                         }
                     },
-                    "parent": "urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::pulumi:pulumi:Stack::pit-project-7760edbe319d4e41-pit-stack-5596f8c6cb3b4485",
-                    "provider": "urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::pulumi:providers:aws::default_1_2_1::4954fa74-510f-4e3c-9c25-eb357b6fac07",
+                    "parent": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::pulumi:pulumi:Stack::pitf-project-f90c97ba86734aed-pitf-stack-388ef76614da4d71",
+                    "provider": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::pulumi:providers:aws::default_1_7_0::90dbb9b7-72b5-472f-a2d4-3e77be4c1709",
                     "propertyDependencies": {
+                        "forceDestroy": null,
                         "tags": null
                     }
                 },
                 {
-                    "urn": "urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::ComponentResource:IntegrationTest::pitfall-test-component-resource",
-                    "custom": false,
-                    "type": "ComponentResource:IntegrationTest",
-                    "parent": "urn:pulumi:pit-stack-5596f8c6cb3b4485::pit-project-7760edbe319d4e41::pulumi:pulumi:Stack::pit-project-7760edbe319d4e41-pit-stack-5596f8c6cb3b4485"
+                    "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/subnet:Subnet::public-subnet-1",
+                    "custom": true,
+                    "id": "subnet-0a986162f9f4834df",
+                    "type": "aws:ec2/subnet:Subnet",
+                    "inputs": {
+                        "__defaults": [],
+                        "assignIpv6AddressOnCreation": false,
+                        "availabilityZone": "us-west-2a",
+                        "cidrBlock": "10.0.0.0/20",
+                        "mapPublicIpOnLaunch": true,
+                        "tags": {
+                            "BillingProject": "integration-testing",
+                            "CreatedBy": "Pulumi",
+                            "Environment": "test",
+                            "Name": "public-subnet-1",
+                            "PulumiProject": "pitf-project-f90c97ba86734aed",
+                            "PulumiStack": "pitf-stack-388ef76614da4d71",
+                            "VPC": "vpc-0704f4b9f5ad93528",
+                            "__defaults": []
+                        },
+                        "vpcId": "vpc-0704f4b9f5ad93528"
+                    },
+                    "outputs": {
+                        "__meta": "{\"schema_version\":\"1\"}",
+                        "arn": "arn:aws:ec2:us-west-2:404182346941:subnet/subnet-0a986162f9f4834df",
+                        "assignIpv6AddressOnCreation": false,
+                        "availabilityZone": "us-west-2a",
+                        "availabilityZoneId": "usw2-az1",
+                        "cidrBlock": "10.0.0.0/20",
+                        "id": "subnet-0a986162f9f4834df",
+                        "ipv6CidrBlock": "",
+                        "ipv6CidrBlockAssociationId": "",
+                        "mapPublicIpOnLaunch": true,
+                        "ownerId": "404182346941",
+                        "tags": {
+                            "BillingProject": "integration-testing",
+                            "CreatedBy": "Pulumi",
+                            "Environment": "test",
+                            "Name": "public-subnet-1",
+                            "PulumiProject": "pitf-project-f90c97ba86734aed",
+                            "PulumiStack": "pitf-stack-388ef76614da4d71",
+                            "VPC": "vpc-0704f4b9f5ad93528"
+                        },
+                        "vpcId": "vpc-0704f4b9f5ad93528"
+                    },
+                    "parent": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets::pitfall-test-vpc",
+                    "dependencies": [
+                        "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/vpc:Vpc::vpc"
+                    ],
+                    "provider": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::pulumi:providers:aws::default_1_7_0::90dbb9b7-72b5-472f-a2d4-3e77be4c1709",
+                    "propertyDependencies": {
+                        "assignIpv6AddressOnCreation": null,
+                        "availabilityZone": null,
+                        "cidrBlock": null,
+                        "mapPublicIpOnLaunch": null,
+                        "tags": [
+                            "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/vpc:Vpc::vpc"
+                        ],
+                        "vpcId": [
+                            "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/vpc:Vpc::vpc"
+                        ]
+                    }
+                },
+                {
+                    "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/subnet:Subnet::public-subnet-2",
+                    "custom": true,
+                    "id": "subnet-05c7359ece39e7eb1",
+                    "type": "aws:ec2/subnet:Subnet",
+                    "inputs": {
+                        "__defaults": [],
+                        "assignIpv6AddressOnCreation": false,
+                        "availabilityZone": "us-west-2b",
+                        "cidrBlock": "10.0.16.0/20",
+                        "mapPublicIpOnLaunch": true,
+                        "tags": {
+                            "BillingProject": "integration-testing",
+                            "CreatedBy": "Pulumi",
+                            "Environment": "test",
+                            "Name": "public-subnet-2",
+                            "PulumiProject": "pitf-project-f90c97ba86734aed",
+                            "PulumiStack": "pitf-stack-388ef76614da4d71",
+                            "VPC": "vpc-0704f4b9f5ad93528",
+                            "__defaults": []
+                        },
+                        "vpcId": "vpc-0704f4b9f5ad93528"
+                    },
+                    "outputs": {
+                        "__meta": "{\"schema_version\":\"1\"}",
+                        "arn": "arn:aws:ec2:us-west-2:404182346941:subnet/subnet-05c7359ece39e7eb1",
+                        "assignIpv6AddressOnCreation": false,
+                        "availabilityZone": "us-west-2b",
+                        "availabilityZoneId": "usw2-az2",
+                        "cidrBlock": "10.0.16.0/20",
+                        "id": "subnet-05c7359ece39e7eb1",
+                        "ipv6CidrBlock": "",
+                        "ipv6CidrBlockAssociationId": "",
+                        "mapPublicIpOnLaunch": true,
+                        "ownerId": "404182346941",
+                        "tags": {
+                            "BillingProject": "integration-testing",
+                            "CreatedBy": "Pulumi",
+                            "Environment": "test",
+                            "Name": "public-subnet-2",
+                            "PulumiProject": "pitf-project-f90c97ba86734aed",
+                            "PulumiStack": "pitf-stack-388ef76614da4d71",
+                            "VPC": "vpc-0704f4b9f5ad93528"
+                        },
+                        "vpcId": "vpc-0704f4b9f5ad93528"
+                    },
+                    "parent": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets::pitfall-test-vpc",
+                    "dependencies": [
+                        "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/vpc:Vpc::vpc"
+                    ],
+                    "provider": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::pulumi:providers:aws::default_1_7_0::90dbb9b7-72b5-472f-a2d4-3e77be4c1709",
+                    "propertyDependencies": {
+                        "assignIpv6AddressOnCreation": null,
+                        "availabilityZone": null,
+                        "cidrBlock": null,
+                        "mapPublicIpOnLaunch": null,
+                        "tags": [
+                            "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/vpc:Vpc::vpc"
+                        ],
+                        "vpcId": [
+                            "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/vpc:Vpc::vpc"
+                        ]
+                    }
+                },
+                {
+                    "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/internetGateway:InternetGateway::internet-gateway",
+                    "custom": true,
+                    "id": "igw-05f10892bfe5cd2db",
+                    "type": "aws:ec2/internetGateway:InternetGateway",
+                    "inputs": {
+                        "__defaults": [],
+                        "tags": {
+                            "BillingProject": "integration-testing",
+                            "CreatedBy": "Pulumi",
+                            "Environment": "test",
+                            "Name": "pitfall-test-vpc",
+                            "PulumiProject": "pitf-project-f90c97ba86734aed",
+                            "PulumiStack": "pitf-stack-388ef76614da4d71",
+                            "__defaults": []
+                        },
+                        "vpcId": "vpc-0704f4b9f5ad93528"
+                    },
+                    "outputs": {
+                        "id": "igw-05f10892bfe5cd2db",
+                        "ownerId": "404182346941",
+                        "tags": {
+                            "BillingProject": "integration-testing",
+                            "CreatedBy": "Pulumi",
+                            "Environment": "test",
+                            "Name": "pitfall-test-vpc",
+                            "PulumiProject": "pitf-project-f90c97ba86734aed",
+                            "PulumiStack": "pitf-stack-388ef76614da4d71"
+                        },
+                        "vpcId": "vpc-0704f4b9f5ad93528"
+                    },
+                    "parent": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets::pitfall-test-vpc",
+                    "dependencies": [
+                        "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/vpc:Vpc::vpc"
+                    ],
+                    "provider": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::pulumi:providers:aws::default_1_7_0::90dbb9b7-72b5-472f-a2d4-3e77be4c1709",
+                    "propertyDependencies": {
+                        "tags": null,
+                        "vpcId": [
+                            "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/vpc:Vpc::vpc"
+                        ]
+                    }
+                },
+                {
+                    "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/routeTableAssociation:RouteTableAssociation::public-subnet-1-rta",
+                    "custom": true,
+                    "id": "rtbassoc-0eac8d69a979f50ca",
+                    "type": "aws:ec2/routeTableAssociation:RouteTableAssociation",
+                    "inputs": {
+                        "__defaults": [],
+                        "routeTableId": "rtb-04c0164103f4f39e3",
+                        "subnetId": "subnet-0a986162f9f4834df"
+                    },
+                    "outputs": {
+                        "id": "rtbassoc-0eac8d69a979f50ca",
+                        "routeTableId": "rtb-04c0164103f4f39e3",
+                        "subnetId": "subnet-0a986162f9f4834df"
+                    },
+                    "parent": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets::pitfall-test-vpc",
+                    "dependencies": [
+                        "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/subnet:Subnet::public-subnet-1",
+                        "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/routeTable:RouteTable::public-route-table"
+                    ],
+                    "provider": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::pulumi:providers:aws::default_1_7_0::90dbb9b7-72b5-472f-a2d4-3e77be4c1709",
+                    "propertyDependencies": {
+                        "routeTableId": [
+                            "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/routeTable:RouteTable::public-route-table"
+                        ],
+                        "subnetId": [
+                            "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/subnet:Subnet::public-subnet-1"
+                        ]
+                    }
+                },
+                {
+                    "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/routeTableAssociation:RouteTableAssociation::public-subnet-2-rta",
+                    "custom": true,
+                    "id": "rtbassoc-040495bddc89749a7",
+                    "type": "aws:ec2/routeTableAssociation:RouteTableAssociation",
+                    "inputs": {
+                        "__defaults": [],
+                        "routeTableId": "rtb-04c0164103f4f39e3",
+                        "subnetId": "subnet-05c7359ece39e7eb1"
+                    },
+                    "outputs": {
+                        "id": "rtbassoc-040495bddc89749a7",
+                        "routeTableId": "rtb-04c0164103f4f39e3",
+                        "subnetId": "subnet-05c7359ece39e7eb1"
+                    },
+                    "parent": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets::pitfall-test-vpc",
+                    "dependencies": [
+                        "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/subnet:Subnet::public-subnet-2",
+                        "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/routeTable:RouteTable::public-route-table"
+                    ],
+                    "provider": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::pulumi:providers:aws::default_1_7_0::90dbb9b7-72b5-472f-a2d4-3e77be4c1709",
+                    "propertyDependencies": {
+                        "routeTableId": [
+                            "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/routeTable:RouteTable::public-route-table"
+                        ],
+                        "subnetId": [
+                            "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/subnet:Subnet::public-subnet-2"
+                        ]
+                    }
+                },
+                {
+                    "urn": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/route:Route::public-default-gw",
+                    "custom": true,
+                    "id": "r-rtb-04c0164103f4f39e31080289494",
+                    "type": "aws:ec2/route:Route",
+                    "inputs": {
+                        "__defaults": [],
+                        "destinationCidrBlock": "0.0.0.0/0",
+                        "gatewayId": "igw-05f10892bfe5cd2db",
+                        "routeTableId": "rtb-04c0164103f4f39e3"
+                    },
+                    "outputs": {
+                        "destinationCidrBlock": "0.0.0.0/0",
+                        "destinationPrefixListId": "",
+                        "egressOnlyGatewayId": "",
+                        "gatewayId": "igw-05f10892bfe5cd2db",
+                        "id": "r-rtb-04c0164103f4f39e31080289494",
+                        "instanceId": "",
+                        "instanceOwnerId": "",
+                        "natGatewayId": "",
+                        "networkInterfaceId": "",
+                        "origin": "CreateRoute",
+                        "routeTableId": "rtb-04c0164103f4f39e3",
+                        "state": "active",
+                        "transitGatewayId": "",
+                        "vpcPeeringConnectionId": ""
+                    },
+                    "parent": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets::pitfall-test-vpc",
+                    "dependencies": [
+                        "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/internetGateway:InternetGateway::internet-gateway",
+                        "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/routeTable:RouteTable::public-route-table"
+                    ],
+                    "provider": "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::pulumi:providers:aws::default_1_7_0::90dbb9b7-72b5-472f-a2d4-3e77be4c1709",
+                    "propertyDependencies": {
+                        "destinationCidrBlock": null,
+                        "gatewayId": [
+                            "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/internetGateway:InternetGateway::internet-gateway"
+                        ],
+                        "routeTableId": [
+                            "urn:pulumi:pitf-stack-388ef76614da4d71::pitf-project-f90c97ba86734aed::ComponentResource:VpcWithPublicSubnets$aws:ec2/routeTable:RouteTable::public-route-table"
+                        ]
+                    }
                 }
             ]
         }

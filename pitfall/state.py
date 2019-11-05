@@ -12,27 +12,126 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import annotations
 from . import utils
 from . import exceptions
-from dataclasses import dataclass
+from anytree import NodeMixin, RenderTree, ContStyle, findall_by_attr
+from anytree.exporter import DotExporter
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import List, Union
+from typing import Dict, List, Tuple, Union
 import json
-import re
 import subprocess
 
 
-@dataclass(frozen=True)
-class PulumiResource:
+class PulumiResource(NodeMixin):
+    def __init__(self,
+        urn: str, rtype: str, rid: str, provider: str = None,
+        inputs: dict = None, outputs: dict = None, dependencies: dict = None,
+        parent: Union['PulumiResource', None] = None
+    ) -> None:
+        super().__init__()
+
+        self.urn          = urn
+        self.type         = rtype
+        self.id           = rid
+        self.provider     = provider
+        self.inputs       = inputs
+        self.outputs      = outputs
+        self.dependencies = dependencies
+        self.parent       = parent
+
+    def __repr__(self):
+        s = "PulumiResource(urn=%r, rtype=%r, rid=%r, provider=%r, inputs=%r, outputs=%r, dependencies=%r, parent=%r)" % (self.urn, self.type, self.id, self.provider, self.inputs, self.outputs, self.dependencies, self.parent)
+        return s
+
+
+@dataclass
+class PulumiResources:
     # TODO: requires documentation
-    id: str
-    urn: str
-    type: str
-    inputs: dict
-    outputs: dict
-    parent: Union[str, None]
-    provider: str
-    dependencies: dict
+    items: List[PulumiResource] = field(default_factory=list)
+
+    def __post_init__(self):
+        self._providers = {}
+        self._types     = {}
+
+    def __len__(self) -> int:
+        return len(self.items)
+
+    def __getitem__(self, index):
+        return self.items[index]
+
+    def __iter__(self):
+        self.n = 0
+        return self
+
+    def __next__(self):
+        if self.n < len(self):
+            i = self.items[self.n]
+            self.n += 1
+            return i
+        else:
+            raise StopIteration
+
+    def append(self, obj) -> None:
+        self.items.append(obj)
+
+    def lookup(self, key, value) -> Union[Tuple[PulumiResource, ...], Tuple[()]]:
+        """ lookup resources by searching using a key (ie. id, urn, provider, type) and value """
+        return findall_by_attr(self.items[0], name=key, value=value)
+
+    def __find_root_node(self, node):
+        """ returns the root node of the resources tree """
+        if node.is_root:
+            return node
+        else:
+            return self.__find_root_node(node.parent)
+
+    def __format_node_name(self, node) -> str:
+        """ formats the node name to 'node.type (node.id)' """
+        s = node.type
+        if node.id:
+            s += f" ({node.id})"
+        return s
+
+    def render_tree(self, style=ContStyle) -> None:
+        """ renders the resources tree in the style set by `style`. Defaults to anytree's ContStyle """
+        root = self.__find_root_node(self.items[0])
+        print(RenderTree(root, style=ContStyle).by_attr(self.__format_node_name))
+
+    def export_dotfile(self, filename=None) -> None:
+        """ exports the resources tree as a DOT file to the file specified by `filename`. Defaults to the local directory otherwise """
+        if filename is None:
+            filename = Path.cwd().joinpath('graph.dot')
+        else:
+            filename = filename.expanduser().absolute()
+
+        root = self.__find_root_node(self.items[0])
+        DotExporter(root, nodenamefunc=self.__format_node_name).to_dotfile(filename)
+
+    @property
+    def types(self) -> Dict[str, int]:
+        """ returns a dictionary of resource types and their count of resources """
+        if len(self._types):
+            return self._types
+
+        for i in self.items:
+            self._types[i.type] = self._types.setdefault(i.type, 0) + 1
+
+        return self._types
+
+    @property
+    def providers(self) -> Dict[str, int]:
+        """ returns a dictionary of resource providers and their count of resources """
+        if len(self._providers):
+            return self._providers
+
+        for i in self.items:
+            if i.provider:
+                provider = i.provider.split("::")[2]
+                self._providers[provider] = self._providers.setdefault(provider, 0) + 1
+
+        return self._providers
 
 
 @dataclass
@@ -102,35 +201,33 @@ class PulumiState:
         return utils.sha256sum(self.pulumi_version.encode('utf-8'))
 
     @property
-    def resources(self) -> List[PulumiResource]:
-        resources = []
+    def resources(self) -> PulumiResources:
+        pulumi_resources = PulumiResources()
 
         state_resources = self.current["checkpoint"]["latest"].get("resources", [])
 
-        regex = re.compile('pulumi:.+:.+')
-
         for i in state_resources:
-            resource_type = i["type"]
-            if regex.match(resource_type):
-                continue
-
-            # skip any resource that doesnt have an id (eg, ComponentResource)
-            if i.get("id") is None:
-                continue
+            urn      = i["urn"]
+            rtype    = i["type"]
+            provider = i.get("provider")
+            parent   = i.get("parent")
 
             pulumi_resource = PulumiResource(
-                id           = i["id"],
-                urn          = i["urn"],
-                type         = i["type"],
+                urn          = urn,
+                rtype        = rtype,
+                rid          = i.get("id"),
                 inputs       = i.get("inputs", {}),
                 outputs      = i.get("outputs", {}),
-                parent       = i.get("parent", None),
-                provider     = i["provider"],
+                provider     = provider,
                 dependencies = i.get("propertyDependencies", {})
             )
-            resources.append(pulumi_resource)
 
-        return resources
+            if parent:
+                pulumi_resource.parent = pulumi_resources.lookup(key="urn", value=parent)[0]
+
+            pulumi_resources.append(pulumi_resource)
+
+        return pulumi_resources
 
     @property
     def current(self) -> dict:

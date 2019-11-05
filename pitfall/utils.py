@@ -13,18 +13,15 @@
 # limitations under the License.
 
 from . import exceptions
-from contextlib import contextmanager
 from Cryptodome.Cipher import AES
 from Cryptodome.Hash import SHA1, SHA256
 from Cryptodome.Protocol.KDF import PBKDF2
 from Cryptodome.Random import get_random_bytes
 from datetime import datetime
-from io import StringIO
 from pathlib import Path
-from typing import Callable, Dict, Tuple
+from typing import Dict, Tuple
 import base64
 import distutils.spawn
-import sys
 import uuid
 
 
@@ -170,17 +167,3 @@ def find_pulumi_binary() -> str:
     if location is None:
         raise exceptions.PulumiBinaryNotFoundError("Could not find the pulumi binary on the system")
     return location
-
-
-@contextmanager
-def capture_stdout(f: Callable, *args, **kwargs):
-    """ context manager that captures whatever is output to sys.stdout """
-    out        = sys.stdout
-    sys.stdout = StringIO()
-
-    try:
-        f(*args, **kwargs)
-        sys.stdout.seek(0)
-        yield sys.stdout.read()
-    finally:
-        sys.stdout = out

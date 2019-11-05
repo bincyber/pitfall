@@ -90,6 +90,7 @@ class TestProvisioningS3Bucket(unittest.TestCase):
             self.assertTrue(pulumi_step.new_state_inputs["bucket"].startswith(bucket_name))
             self.assertEqual("private", pulumi_step.new_state_inputs["acl"])
 
+            # execute `pulumi up` to provision resources
             integration_test.up.execute()
 
             outputs = integration_test.get_stack_outputs()
@@ -101,11 +102,16 @@ class TestProvisioningS3Bucket(unittest.TestCase):
             self.assertIs(dict, type(response))
 
             # verify required tags have been set by checking the state file
-            s3_resource = integration_test.state.resources[0]
-            self.assertEqual("aws:s3/bucket:Bucket", s3_resource.type)
+            resources = integration_test.state.resources
+
+            s3_bucket_resource = resources.lookup(key="type", value="aws:s3/bucket:Bucket")[0]
+            self.assertEqual("aws:s3/bucket:Bucket", s3_bucket_resource.type)
 
             required_tags = {"CreatedBy", "CreatedOn", "Environment", "BillingProject", "Owner"}
-            self.assertTrue(required_tags <= set(s3_resource.outputs["tags"]))
+            self.assertTrue(required_tags <= set(s3_bucket_resource.outputs["tags"]))
+
+            # render the tree of resources
+            resources.render_tree()
 
             # upload __main__.py to the S3 bucket
             filename       = "__main__.py"

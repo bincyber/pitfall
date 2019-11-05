@@ -16,8 +16,8 @@ for k, v in pipfile["packages"].items():
         package = f"{k}{v}"
     requirements.append(package)
 
-
-setup(name='pitfall',
+setup(
+    name='pitfall',
     version=version,
     description='An integration testing framework for Pulumi Infrastructure as Code',
     long_description=readme,
