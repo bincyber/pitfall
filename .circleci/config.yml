@@ -139,3 +139,6 @@ workflows:
           context: SonarCloud
           requires:
             - unit_tests
+          filters:
+            branches:
+              only: master
