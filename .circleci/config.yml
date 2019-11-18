@@ -79,7 +79,6 @@ jobs:
           name: Run unit tests
           command: |
             pipenv run make test
-            pipenv run coverage report
 
       - store_artifacts:
           path: htmlcov

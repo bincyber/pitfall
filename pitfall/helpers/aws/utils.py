@@ -13,6 +13,11 @@
 # limitations under the License.
 
 from typing import List, Dict, Any
+import boto3
+import random
+
+
+DEFAULT_REGION = "us-east-1"
 
 
 def extract_tags(tag_set: List[Dict[str, Any]]) -> dict:
@@ -31,3 +36,34 @@ def extract_tags(tag_set: List[Dict[str, Any]]) -> dict:
         v = i["Value"]
         tags[k] = v
     return tags
+
+
+def get_all_regions() -> List[str]:
+    """
+    Gets a list of AWS regions available in this account.
+
+    :returns: a list of AWS regions
+    :rtype: list
+    """
+    ec2 = boto3.client('ec2', region_name=DEFAULT_REGION)
+
+    r = ec2.describe_regions()
+
+    available_regions = []
+
+    for i in r["Regions"]:
+        region = i["RegionName"]
+        available_regions.append(region)
+
+    return available_regions
+
+
+def get_random_region() -> str:
+    """
+    Geta a random AWS region from the regions available in this account.
+
+    :returns: a random AWS region
+    :rtype: str
+    """
+    regions = get_all_regions()
+    return random.choice(regions)

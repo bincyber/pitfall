@@ -9,6 +9,7 @@ clean:
 
 test:
 	nose2 -v -s tests/ --with-coverage --coverage-report html
+	coverage report
 
 e2e-test-aws:
 	nose2 -v -s e2e/aws
