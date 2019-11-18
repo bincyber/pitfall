@@ -1,4 +1,4 @@
-from e2e import utils
+from pitfall.helpers.aws import utils
 from pitfall import PulumiIntegrationTest, PulumiIntegrationTestOptions
 from pitfall import PulumiConfigurationKey, PulumiPlugin
 from pathlib import Path
@@ -71,7 +71,7 @@ class IntegrationTest(unittest.TestCase):
             self.assertEqual(provisioned_vpc["CidrBlock"], vpc_cidr)
 
             # verify that the required tags are set on the VPC
-            tags = utils.extract_tags_from_aws_resource(provisioned_vpc)
+            tags = utils.extract_tags(provisioned_vpc["Tags"])
             self.assertTrue(self.required_tags <= set(tags))
 
             # verify that 2 subnets were provisioned
@@ -104,5 +104,5 @@ class IntegrationTest(unittest.TestCase):
             self.assertEqual("0.0.0.0/0", default_route["DestinationCidrBlock"])
 
             # verify that the required tags are set on the route table
-            tags = utils.extract_tags_from_aws_resource(provisioned_rtb)
+            tags = utils.extract_tags(provisioned_rtb["Tags"])
             self.assertTrue(self.required_tags <= set(tags))

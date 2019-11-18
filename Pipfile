@@ -4,16 +4,17 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+anytree = "==2.7.2"
+boto3 = "==1.10.9"
 pycryptodomex = "==3.9.0"
 PyYAML = "==5.1.2"
-anytree = "==2.7.2"
 
 [dev-packages]
 bandit = "*"
-boto3 = "*"
 coveralls = "*"
 "flake8" = "*"
 ipython = "*"
+moto = "*"
 mypy = "*"
 netaddr = "*"
 "nose2" = "*"

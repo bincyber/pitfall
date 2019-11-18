@@ -405,6 +405,10 @@ digraph tree {
 
 This DOT file can then be viewed using the `dot` command or online at [webgraphviz.com](http://www.webgraphviz.com/).
 
+#### Test Helpers
+
+_pitfall_ includes useful helper classes and functions that can be used in integration tests. These can be found under [pitfall/helpers](https://github.com/bincyber/pitfall/tree/master/pitfall/helpers).
+
 
 ### Environment Variables
 
