@@ -15,11 +15,12 @@
 from __future__ import annotations
 from . import utils
 from . import exceptions
-from anytree import NodeMixin, RenderTree, ContStyle, findall_by_attr
+from anytree import NodeMixin, RenderTree, AbstractStyle, ContStyle, findall_by_attr
 from anytree.exporter import DotExporter
 from dataclasses import dataclass, field
+from os import PathLike
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 import json
 import subprocess
 
@@ -76,35 +77,35 @@ class PulumiResources:
     def append(self, obj) -> None:
         self.items.append(obj)
 
-    def lookup(self, key, value) -> Union[Tuple[PulumiResource, ...], Tuple[()]]:
+    def lookup(self, key: str, value: Any) -> Union[Tuple[PulumiResource, ...], Tuple[()]]:
         """ lookup resources by searching using a key (ie. id, urn, provider, type) and value """
         return findall_by_attr(self.items[0], name=key, value=value)
 
-    def __find_root_node(self, node):
+    def __find_root_node(self, node: PulumiResource):
         """ returns the root node of the resources tree """
         if node.is_root:
             return node
         else:
             return self.__find_root_node(node.parent)
 
-    def __format_node_name(self, node) -> str:
+    def __format_node_name(self, node: PulumiResource) -> str:
         """ formats the node name to 'node.type (node.id)' """
         s = node.type
         if node.id:
             s += f" ({node.id})"
         return s
 
-    def render_tree(self, style=ContStyle) -> None:
+    def render_tree(self, style: AbstractStyle = ContStyle) -> None:
         """ renders the resources tree in the style set by `style`. Defaults to anytree's ContStyle """
         root = self.__find_root_node(self.items[0])
         print(RenderTree(root, style=ContStyle).by_attr(self.__format_node_name))
 
-    def export_dotfile(self, filename=None) -> None:
-        """ exports the resources tree as a DOT file to the file specified by `filename`. Defaults to the local directory otherwise """
+    def export_dotfile(self, filename: PathLike = None) -> None:
+        """ exports the resources tree as a DOT file to the file specified by `filename`. Defaults to graph.dot in the local directory otherwise """
         if filename is None:
             filename = Path.cwd().joinpath('graph.dot')
         else:
-            filename = filename.expanduser().absolute()
+            filename = Path(filename).expanduser().absolute()
 
         root = self.__find_root_node(self.items[0])
         DotExporter(root, nodenamefunc=self.__format_node_name).to_dotfile(filename)

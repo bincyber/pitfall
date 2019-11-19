@@ -116,18 +116,35 @@ class TestPulumiResources(unittest.TestCase):
         self.assertEqual(len(output.split('\n')), 6)
 
     def test_export_dotfile(self):
-        filename = Path('/tmp/graph.dot')
-        if filename.exists():
+        with self.subTest(msg="Path parameter"):
+            filename = Path('/tmp/graph1.dot')
+            if filename.exists():
+                os.remove(filename)
+
+            self.pulumi_resources.export_dotfile(filename)
+            self.assertTrue(filename.exists())
+
+            contents = filename.read_text()
+            self.assertTrue(contents.startswith('digraph tree {'))
+            self.assertEqual(len(contents.split('\n')), 12)
+
             os.remove(filename)
 
-        self.pulumi_resources.export_dotfile(filename)
-        self.assertTrue(filename.exists())
+        with self.subTest(msg="str parameter"):
+            filename = '/tmp/graph2.dot'
+            file     = Path(filename)
 
-        contents = filename.read_text()
-        self.assertTrue(contents.startswith('digraph tree {'))
-        self.assertEqual(len(contents.split('\n')), 12)
+            if file.exists():
+                os.remove(file)
 
-        os.remove(filename)
+            self.pulumi_resources.export_dotfile(filename)
+            self.assertTrue(file.exists())
+
+            contents = file.read_text()
+            self.assertTrue(contents.startswith('digraph tree {'))
+            self.assertEqual(len(contents.split('\n')), 12)
+
+            os.remove(file)
 
     def test_export_dotfile_unspecified_filename(self):
         filename = Path.cwd().joinpath('graph.dot')
