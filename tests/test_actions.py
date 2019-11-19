@@ -27,7 +27,7 @@ import unittest
 class TestPulumiPreview(unittest.TestCase):
     def setUp(self):
         self.pulumi_preview = PulumiPreview()
-        self.args = ['pulumi', 'preview', '--non-interactive', '--json']
+        self.args = ['pulumi', 'preview', '--non-interactive', '--json', '--color=always']
 
     def tearDown(self):
         pass
@@ -69,7 +69,8 @@ class TestPulumiPreview(unittest.TestCase):
                 self.pulumi_preview.execute()
 
             output = b.getvalue()
-            self.assertTrue(output.startswith('$ pulumi preview --non-interactive --json\n'))
+            cmd    = f'$ {" ".join(self.args)}\n'
+            self.assertTrue(output.startswith(cmd))
 
     def test_execute_raises_exception(self):
         stdout = b'{"config":{}, "steps":[], "diagnostics":[{"message":"error: Missing required configuration variable...", "severity": "error"}]}'
@@ -159,7 +160,7 @@ class TestPulumiPreview(unittest.TestCase):
 class TestPulumiUp(unittest.TestCase):
     def setUp(self):
         self.pulumi_up = PulumiUp()
-        self.args = ['pulumi', 'up', '--non-interactive', '--skip-preview']
+        self.args = ['pulumi', 'up', '--non-interactive', '--skip-preview', '--color=always']
 
     def tearDown(self):
         pass
@@ -215,7 +216,8 @@ Permalink: file:///Users/aliibrahim/Devel/local/pit/pit-cocobiek/.pulumi/stacks/
                 self.pulumi_up.execute()
 
             output = b.getvalue()
-            self.assertTrue(output.startswith('$ pulumi up --non-interactive --skip-preview\n'))
+            cmd    = f'$ {" ".join(self.args)}\n'
+            self.assertTrue(output.startswith(cmd))
 
     def test_execute_raises_exception(self):
         stdout = b'''Updating (pit-stack-1e890f9e54c44aef):
@@ -276,7 +278,7 @@ Duration: 3s
 class TestPulumiDestroy(unittest.TestCase):
     def setUp(self):
         self.pulumi_destroy = PulumiDestroy()
-        self.args = ["pulumi", "destroy", "--non-interactive", "--skip-preview"]
+        self.args = ["pulumi", "destroy", "--non-interactive", "--skip-preview", "--color=always"]
 
     def tearDown(self):
         pass
@@ -331,7 +333,8 @@ If you want to remove the stack completely, run 'pulumi stack rm pit-stack-f6822
                 self.pulumi_destroy.execute()
 
             output = b.getvalue()
-            self.assertTrue(output.startswith('$ pulumi destroy --non-interactive --skip-preview\n'))
+            cmd    = f'$ {" ".join(self.args)}\n'
+            self.assertTrue(output.startswith(cmd))
 
     def test_execute_raises_exception(self):
         stdout = b'''Destroying (pit-stack-f68224b0594e4baa):

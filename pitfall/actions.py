@@ -85,7 +85,7 @@ class PulumiAction(ABC):
 class PulumiPreview(PulumiAction):
     def execute(self) -> subprocess.CompletedProcess:
         pulumi_binary = utils.find_pulumi_binary()
-        cmd           = [pulumi_binary, 'preview', '--non-interactive', '--json']
+        cmd           = [pulumi_binary, 'preview', '--non-interactive', '--json', '--color=always']
 
         process = subprocess.run(cmd, capture_output=True)
 
@@ -161,7 +161,7 @@ class PulumiPreview(PulumiAction):
 class PulumiUp(PulumiAction):
     def execute(self, expect_no_changes=False) -> subprocess.CompletedProcess:
         pulumi_binary = utils.find_pulumi_binary()
-        cmd           = [pulumi_binary, 'up', '--non-interactive', '--skip-preview']  # TODO: enable json output with "--json"
+        cmd           = [pulumi_binary, 'up', '--non-interactive', '--skip-preview', '--color=always']  # TODO: enable json output with "--json"
 
         if expect_no_changes:
             cmd.append('--expect-no-changes')
@@ -186,7 +186,7 @@ class PulumiUp(PulumiAction):
 class PulumiDestroy(PulumiAction):
     def execute(self) -> subprocess.CompletedProcess:
         pulumi_binary = utils.find_pulumi_binary()
-        cmd           = [pulumi_binary, 'destroy', '--non-interactive', '--skip-preview']  # TODO: enable json output with "--json"
+        cmd           = [pulumi_binary, 'destroy', '--non-interactive', '--skip-preview', '--color=always']  # TODO: enable json output with "--json"
 
         process = subprocess.run(cmd, capture_output=True)
 
