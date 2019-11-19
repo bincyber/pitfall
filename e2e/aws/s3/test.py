@@ -1,3 +1,4 @@
+from pitfall.helpers.aws import utils
 from pitfall import PulumiIntegrationTest, PulumiIntegrationTestOptions
 from pitfall import PulumiConfigurationKey, PulumiPlugin
 from pathlib import Path
@@ -22,7 +23,7 @@ class TestPulumiCode(unittest.TestCase):
         os.chdir(self.pwd)
 
     def test_aws_provision_s3_bucket_with_auto_cleanup_destroy(self):
-        region      = "us-east-2"
+        region      = utils.get_random_region()
         bucket_name = f"pitfall-test-bucket-1"
 
         config = [

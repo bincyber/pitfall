@@ -44,266 +44,31 @@ _pitfall_ supports a [context manager](https://docs.python.org/3/reference/datam
 
 _pitfall_ does not use the Pulumi Service backend.
 
-### Basic Example
-
-This example will demonstrate provisioning a S3 bucket in AWS and verifying that required tags have been set.
-
-In `__main__.py`, write the Pulumi code to provision the S3 bucket:
-```python
-import pulumi_aws as aws
-import pulumi
-
-cfg = pulumi.Config()
-
-bucket_name = cfg.require("s3-bucket-name")
-
-required_tags = {
-    'CreatedBy': 'Pulumi',
-    'PulumiProject': pulumi.get_project(),
-    'PulumiStack': pulumi.get_stack(),
-}
-
-bucket = aws.s3.Bucket(
-    resource_name=bucket_name,
-    acl="private",
-    force_destroy=True,
-    tags=required_tags
-)
-
-pulumi.export('bucket_name', bucket.id)
-```
-
-In `test.py`, write the integration test:
-```python
-from pitfall import PulumiIntegrationTest, PulumiIntegrationTestOptions
-from pitfall import PulumiConfigurationKey, PulumiPlugin
-from pathlib import Path
-import boto3
-import unittest
-
-
-class IntegrationTest(unittest.TestCase):
-    def test_basic_example(self):
-        region = "us-east-1"
-        bucket_name = "pitfall-basic-example"
-
-        config = [
-            PulumiConfigurationKey(name='aws:region', value=region),
-            PulumiConfigurationKey(name='s3-bucket-name', value=bucket_name)
-        ]
-
-        plugins = [
-            PulumiPlugin(kind='resource', name='aws', version='v1.7.0')
-        ]
-
-        opts = PulumiIntegrationTestOptions(cleanup=True, preview=True, up=True, destroy=True)
-
-        directory = Path(__file__)
-
-        # use the context manager to automatically handle test setup and execution of pulumi preview/up/destroy
-        with PulumiIntegrationTest(directory=directory, config=config, plugins=plugins, opts=opts) as t:
-            # get the name of the bucket from the stack's outputs
-            stack_outputs = t.get_stack_outputs()
-
-            bucket = stack_outputs["bucket_name"]
-
-            # use boto3 to perform verifications
-            s3 = boto3.client(service_name="s3")
-
-            # verify that the bucket was provisioned in us-east-1
-            r = s3.head_bucket(Bucket=bucket)
-
-            bucket_region = r["ResponseMetadata"]["HTTPHeaders"]["x-amz-bucket-region"]
-            self.assertEqual(region, bucket_region)
-
-            # verify that the bucket has the required tags set
-            required_tags = {"CreatedBy", "PulumiProject", "PulumiStack"}
-
-            r = s3.get_bucket_tagging(Bucket=bucket)
-
-            set_tags = {i["Key"]:i["Value"] for i in r["TagSet"]}
-
-            self.assertTrue(required_tags <= set(set_tags))
-```
-
-Execute the integration test and ensure it passes:
-
-    $ python -m unittest -v test.py
-
-    test_basic_example (test.IntegrationTest) ... ok
-
-    ----------------------------------------------------------------------
-    Ran 1 test in 17.669s
-
-    OK
-
-
-### Advanced Example
-
-This example will demonstrate provisioning a S3 bucket in AWS to host a static website and verifying that its serving the right content.
-
-In `index.html`, write the static HTML page to display to website visitors:
-
-```html
-<html>
-<head>
-    <title>Static Website</title>
-    <meta charset="UTF-8">
-</head>
-<body>
-    <p>Provisioned by <a href="https://pulumi.com">Pulumi</a>.</p>
-    <p>Tested by <a href="https://github.com/bincyber/pitfall">pitfall</a></p>
-</body>
-</html>
-```
-
-In `__main__.py`, write the Pulumi code to provision the S3 bucket:
-
-```python
-from json import dumps
-from pathlib import Path
-import pulumi_aws as aws
-import pulumi
-
-
-def get_json_bucket_policy(bucket_arn):
-    return dumps({
-    "Version": "2012-10-17",
-    "Statement": [{
-        "Sid": "PublicReadGetObject",
-        "Effect": "Allow",
-        "Principal": "*",
-        "Action": ["s3:GetObject"],
-        "Resource": f"{bucket_arn}/*"
-    }]
-})
-
-cfg = pulumi.Config()
-
-bucket_name = cfg.require("s3-bucket-name")
-
-tags = {
-    'CreatedBy': 'Pulumi',
-    'PulumiProject': pulumi.get_project(),
-    'PulumiStack': pulumi.get_stack(),
-}
-
-bucket = aws.s3.Bucket(
-    resource_name=bucket_name,
-    force_destroy=True,
-    tags=tags,
-    acl="public-read",
-    website={
-        "index_document":"index.html"
-    }
-)
-
-policy = bucket.arn.apply(get_json_bucket_policy)
-
-bucket_policy = aws.s3.BucketPolicy(
-    resource_name="public_read_get_object",
-    bucket=bucket.id,
-    policy=policy
-)
-
-index_file = Path('./index.html')
-
-bucket_object = aws.s3.BucketObject(
-    resource_name="index.html",
-    acl="public-read",
-    bucket=bucket.id,
-    key="index.html",
-    content=index_file.read_text(),
-    content_type="text/html"
-)
-
-url = pulumi.Output.concat("http://", bucket.website_endpoint)
-
-pulumi.export('bucket_name', bucket.id)
-pulumi.export('website_url', url)
-```
-
-In `test.py`, write the integration test:
-```python
-from pitfall import PulumiIntegrationTest, PulumiIntegrationTestOptions
-from pitfall import PulumiConfigurationKey, PulumiPlugin
-from pathlib import Path
-import boto3
-import requests
-import unittest
-
-
-class IntegrationTest(unittest.TestCase):
-    def test_advanced_example(self):
-        region = "us-east-1"
-        bucket_name = "pitfall-advanced-example"
-
-        config = [
-            PulumiConfigurationKey(name='aws:region', value=region),
-            PulumiConfigurationKey(name='s3-bucket-name', value=bucket_name)
-        ]
-
-        plugins = [
-            PulumiPlugin(kind='resource', name='aws', version='v1.7.0')
-        ]
-
-        opts = PulumiIntegrationTestOptions(cleanup=True, preview=False, up=False, destroy=False)
-
-        directory = Path(__file__)
-
-        with PulumiIntegrationTest(directory=directory, config=config, plugins=plugins, opts=opts) as t:
-            # execute `pulumi preview`
-            t.preview.execute()
-
-            # verify that 3 resources will be provisioned
-            pulumi_steps = t.preview.steps
-            self.assertEqual(len(pulumi_steps), 3)
-
-            for step in pulumi_steps:
-                self.assertEqual("create", step.op)
-
-            # execute `pulumi up`
-            t.up.execute()
-
-            # verify that 3 resources have been provisioned
-            resources = t.state.resources
-            self.assertEqual(resources.providers["pulumi:providers:aws"], 3)
-
-            # get the bucket_name and website_url from the stack outputs
-            stack_outputs = t.get_stack_outputs()
-
-            # verify that the bucket was provisioned
-            bucket = stack_outputs["bucket_name"]
-
-            s3 = boto3.client(service_name="s3")
-            s3.head_bucket(Bucket=bucket)
-
-            # verify that the bucket is hosting a website and serving the uploaded index.html file
-            index_html_file = Path('./index.html')
-
-            url = stack_outputs["website_url"]
-
-            r = requests.get(url, timeout=5)
-            self.assertEqual(r.status_code, 200)
-            self.assertEqual(r.text, index_html_file.read_text())
-
-            # execute `pulumi destroy`
-            t.destroy.execute()
-```
-
-Execute the integration test and ensure it passes:
-
-    $ python -m unittest -v test.py
-
-    test_advanced_example (test.IntegrationTest) ... ok
-
-    ----------------------------------------------------------------------
-    Ran 1 test in 19.033s
-
-    OK
-
+### Examples
+
+1. [Basic S3 Example](https://github.com/bincyber/pitfall/blob/master/examples/basic-s3/README.md) - provision a AWS S3 bucket and verify that required tags have been set on it
+2. [Advanced S3 Example](https://github.com/bincyber/pitfall/blob/master/examples/advanced-s3/README.md) - provision a AWS S3 bucket to host a static website and verify that it's functional
+3. [AWS VPC ComponentResource Example](https://github.com/bincyber/pitfall/blob/master/examples/aws-vpc/README.md) - provision a AWS VPC using a ComponentResource
 
 ### Features
+
+#### Context Manager
+
+_pitfall_ includes a context manager to automatically setup a test and execute the Pulumi workflow:
+
+```python
+from pitfall import PulumiConfigurationKey, PulumiIntegrationTest
+
+directory = '/path/to/pulumi/code'
+opts      = PulumiIntegrationTestOptions(cleanup=True, preview=True, up=True, destroy=True)
+
+with PulumiIntegrationTest(directory=directory, opts=opts) as t:
+    pass
+```
+
+The context manager will create a temporary directory for the test, copy the entire contents of `directory` to the temporary directory, generate the Pulumi Project and Stack files, initialize a new Pulumi local state file, install Pulumi plugins, and execute `pulumi preview`, `pulumi up`, and `pulumi destroy`. Upon exit, the context manager will delete the temporary directory.
+
+To control automatic execution of Pulumi commands, temporary directory deletion, and verbosity, set desired options with [PulumiIntegrationTestOptions](https://github.com/bincyber/pitfall/blob/master/pitfall/core.py#L36).
 
 #### Configuration and Secrets
 
@@ -337,29 +102,9 @@ config:
 encryptionsalt: v1:GEHe83S30O0=:v1:s8vb7cVFSz64pUmv:Ff5AbbcbTSim8cBwDCQCwraGHEQQ/A==
 ```
 
-
-#### Context Manager
-
-_pitfall_ includes a context manager to automatically setup a test and execute the Pulumi workflow:
-
-```python
-from pitfall import PulumiConfigurationKey, PulumiIntegrationTest
-
-directory = '/path/to/pulumi/code'
-opts      = PulumiIntegrationTestOptions(cleanup=True, preview=True, up=True, destroy=True)
-
-with PulumiIntegrationTest(directory=directory, opts=opts) as t:
-    pass
-```
-
-The context manager will create a temporary directory for the test, copy the entire contents of `directory` to the temporary directory, generate the Pulumi Project and Stack files, initialize a new Pulumi local state file, install Pulumi plugins, and execute `pulumi preview`, `pulumi up`, and `pulumi destroy`. Upon exit, the context manager will delete the temporary directory.
-
-To control automatic execution of Pulumi commands, temporary directory deletion, and verbosity, set desired options with [PulumiIntegrationTestOptions](https://github.com/bincyber/pitfall/blob/master/pitfall/core.py#L36).
-
-
 #### Pulumi State
 
-_pitfall_ exposes the Pulumi state as a Python object [PulumiState](https://github.com/bincyber/pitfall/blob/master/pitfall/state.py#L39). Both the current and previous state are accessible as Class properties. The resources in the state file can be viewed and searched:
+_pitfall_ exposes the Pulumi state as a Python object [PulumiState](https://github.com/bincyber/pitfall/blob/master/pitfall/state.py#L39). Both the current and previous state are accessible as Class properties. The resources in the current state file can be viewed and searched:
 
 ```python
 t = PulumiIntegrationTest()
@@ -380,6 +125,17 @@ s3_bucket = results[0]
 print(s3_bucket.id)  # pitfall-basic-example-649ce5f
 
 print(s3_bucket.outputs["arn"])  # arn:aws:s3:::pitfall-basic-example-649ce5f
+```
+
+#### Stack Outputs
+
+_pitfall_ collects Pulumi [Stack outputs](https://www.pulumi.com/docs/intro/concepts/programming-model/#stack-outputs), so that they can be accessed in tests:
+
+```python
+with PulumiIntegrationTest(directory=directory, opts=opts) as t:
+    outputs = t.get_stack_outputs()
+
+    s3_bucket_arn = outputs["s3_bucket"]["arn"]
 ```
 
 #### Resources Graph

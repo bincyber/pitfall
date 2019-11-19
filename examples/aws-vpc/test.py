@@ -9,11 +9,13 @@ import unittest
 class IntegrationTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.region   = utils.get_random_region()
-        vpc_name = "pitfall-test-vpc"
+        cls.region = utils.get_random_region()
+        print("[DEBUG] Using AWS Region: ", cls.region)
+
         cls.vpc_cidr = "10.0.0.0/16"
-        subnets  = 2
-        prefix   = 20
+        vpc_name     = "pitfall-test-vpc"
+        subnets      = 2
+        prefix       = 20
 
         config = [
             PulumiConfigurationKey(name='aws:region', value=cls.region),
@@ -30,7 +32,7 @@ class IntegrationTest(unittest.TestCase):
         ]
 
         opts = PulumiIntegrationTestOptions(
-            verbose=True,
+            verbose=False,
             cleanup=False,
             preview=True,
             up=True,

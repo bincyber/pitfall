@@ -7,7 +7,7 @@ import unittest
 
 
 class IntegrationTest(unittest.TestCase):
-    def test_advanced_example(self):
+    def test_advanced_s3_example(self):
         region = "us-east-1"
         bucket_name = "pitfall-advanced-example"
 
@@ -20,7 +20,13 @@ class IntegrationTest(unittest.TestCase):
             PulumiPlugin(kind='resource', name='aws', version='v1.7.0')
         ]
 
-        opts = PulumiIntegrationTestOptions(verbose=True, cleanup=True, preview=False, up=False, destroy=False)
+        opts = PulumiIntegrationTestOptions(
+            verbose=True,
+            cleanup=True,
+            preview=False,
+            up=False,
+            destroy=False
+        )
 
         directory = Path(__file__)
 

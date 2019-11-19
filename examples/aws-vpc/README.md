@@ -1,8 +1,49 @@
+### AWS - VPC Component Resource Example
+
+This example will demonstrate provisioning a VPC with public subnets in AWS using a [Pulumi Component](https://www.pulumi.com/docs/intro/concepts/programming-model/#components).
+
+Refer to [`component.py`](https://github.com/bincyber/pitfall/blob/master/examples/aws-vpc/component.py) for the Component Resource.
+
+In `__main__.py`, write the Pulumi code to provision the VPC:
+```python
+from component import VpcWithPublicSubnets
+import pulumi
+
+
+cfg = pulumi.Config()
+
+vpc_name = cfg.require("vpc-name")
+vpc_cidr = cfg.require("vpc-cidr")
+subnets  = cfg.require_int("subnets")
+prefix   = cfg.require_int("prefix")
+
+tags = {
+    'Environment': cfg.require('environment'),
+    'BillingProject': cfg.require('billing-project'),
+    'CreatedBy': 'Pulumi',
+    'PulumiProject': pulumi.get_project(),
+    'PulumiStack': pulumi.get_stack(),
+}
+
+component = VpcWithPublicSubnets(
+    name=vpc_name,
+    cidr=vpc_cidr,
+    subnets=subnets,
+    prefix=prefix,
+    tags=tags
+)
+
+component.export()
+```
+
+In `test.py`, write the integration test:
+```python
 from pitfall.helpers.aws import utils
 from pitfall import PulumiIntegrationTest, PulumiIntegrationTestOptions
 from pitfall import PulumiConfigurationKey, PulumiPlugin
 from pathlib import Path
 import boto3
+import os
 import unittest
 
 
@@ -30,7 +71,7 @@ class IntegrationTest(unittest.TestCase):
         ]
 
         opts = PulumiIntegrationTestOptions(
-            verbose=True,
+            verbose=False,
             cleanup=False,
             preview=True,
             up=True,
@@ -152,3 +193,20 @@ class IntegrationTest(unittest.TestCase):
         with self.subTest(msg="Verify tags on the route table"):
             tags = utils.extract_tags(rtb["Tags"])
             self.assertTrue(self.required_tags <= set(tags))
+```
+
+Execute the integration test and ensure it passes:
+
+    $ python -m unittest -v test.py
+
+    test_pulumi_preview (examples.aws-vpc.test.IntegrationTest) ... ok
+    test_pulumi_up (examples.aws-vpc.test.IntegrationTest) ... ok
+    test_pulumi_up_idempotency (examples.aws-vpc.test.IntegrationTest) ... ok
+    test_verify_route_table (examples.aws-vpc.test.IntegrationTest) ... ok
+    test_verify_subnets (examples.aws-vpc.test.IntegrationTest) ... ok
+    test_verify_vpc (examples.aws-vpc.test.IntegrationTest) ... ok
+
+    ----------------------------------------------------------------------
+    Ran 6 tests in 39.416s
+
+    OK
