@@ -207,10 +207,10 @@ class PulumiState:
         state_resources = self.current["checkpoint"]["latest"].get("resources", [])
 
         for i in state_resources:
-            urn      = i["urn"]
-            rtype    = i["type"]
-            provider = i.get("provider")
-            parent   = i.get("parent")
+            urn        = i["urn"]
+            rtype      = i["type"]
+            provider   = i.get("provider")
+            parent_urn = i.get("parent")
 
             pulumi_resource = PulumiResource(
                 urn          = urn,
@@ -222,8 +222,10 @@ class PulumiState:
                 dependencies = i.get("propertyDependencies", {})
             )
 
-            if parent:
-                pulumi_resource.parent = pulumi_resources.lookup(key="urn", value=parent)[0]
+            if parent_urn is not None:
+                results = pulumi_resources.lookup(key="urn", value=parent_urn)
+                if results:
+                    pulumi_resource.parent = results[0]
 
             pulumi_resources.append(pulumi_resource)
 
