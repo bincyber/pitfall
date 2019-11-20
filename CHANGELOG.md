@@ -1,6 +1,10 @@
 CHANGELOG
 =========
 
+## v0.0.4 (2019-11-19)
+
+- Fixed an error in setup.py causing subpackages to not be published to PyPi ([#10](https://github.com/bincyber/pitfall/pull/10))
+
 ## v0.0.3 (2019-11-19)
 
 - Updated execute actions to always output with color ([#9](https://github.com/bincyber/pitfall/pull/9))

@@ -1,5 +1,5 @@
 from pathlib import Path
-from setuptools import setup
+from setuptools import find_packages, setup
 import toml
 
 
@@ -24,9 +24,10 @@ setup(
     long_description_content_type="text/markdown",
     url='http://github.com/bincyber/pitfall',
     author='@bincyber',
+    author_email="bincyber@users.noreply.github.com",
     license='Apache',
     keywords="infrastructure-as-code testing devops pulumi",
-    packages=['pitfall'],
+    packages=find_packages(where='.', include=["pitfall", "pitfall.*"]),
     python_requires='>=3.7',
     platforms=['any'],
     install_requires=requirements,
